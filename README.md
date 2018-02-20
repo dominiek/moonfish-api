@@ -20,6 +20,7 @@
 All routes are name spaced with a v1 version:
 
 ```
+GET     /1/info/details                # Get tokensale details
 POST    /1/users                       # Create user (signup)
 POST    /1/users/sessions              # Create session / jwt (login)
 GET     /1/users/self                  # Get my user info
@@ -73,7 +74,7 @@ docker build -t ico-template-auction-api .
 - [x] Improve JWT configuration
 - [x] Harden JWT tests
 - [x] Remove certain user routes for security
-- [ ] Add status API
+- [x] Add info/details API
 - [ ] Core investor CRUD logic
 - [ ] Add magic token for each investor
 - [ ] Add investors API
