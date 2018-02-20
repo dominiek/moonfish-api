@@ -11,8 +11,6 @@ import {
   authenticate,
   encodeSession,
   exportSafeUser,
-  forgotPassword,
-  resetPassword,
 } from '../lib/users';
 import User from '../models/user';
 

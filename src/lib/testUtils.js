@@ -15,7 +15,7 @@ export const teardownMongooseDb = () => new Promise((resolve) => {
   resolve();
 });
 
-export const createTestUserWithSession = async (id, role = 'user', jwtSecret) => {
+export const createTestUserWithSession = async (jwtSecret, id, role = 'user') => {
   const user = await signup({
     username: id,
     email: `${id}@me.com`,

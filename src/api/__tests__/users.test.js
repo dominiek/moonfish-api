@@ -12,8 +12,10 @@ import {
   generateSessionHeader,
 } from '../../lib/testUtils';
 
+const JWT_SECRET = 'testo';
+
 beforeAll(async () => {
-  app.use('/', controller({}));
+  app.use('/', controller({ config: { jwt: { secret: JWT_SECRET } } }));
   app.use(jsonErrorHandler);
 
   await setupMongooseDb();
@@ -72,7 +74,7 @@ describe('User', () => {
   });
 
   test('It should be update my account', async () => {
-    const [, token] = await createTestUserWithSession('john');
+    const [, token] = await createTestUserWithSession(JWT_SECRET, 'john');
 
     const response = await request(app)
       .post('/self')
@@ -84,7 +86,7 @@ describe('User', () => {
   });
 
   test('It should be delete my account', async () => {
-    const [, token] = await createTestUserWithSession('john');
+    const [, token] = await createTestUserWithSession(JWT_SECRET, 'john');
 
     const response = await request(app)
       .delete('/self')
@@ -95,7 +97,7 @@ describe('User', () => {
   });
 
   test('It should be able to get a user for admin', async () => {
-    const [adminUser, adminToken] = await createTestUserWithSession('dominiek', 'admin');
+    const [adminUser, adminToken] = await createTestUserWithSession(JWT_SECRET, 'dominiek', 'admin');
     const response = await request(app)
       .get(`/${adminUser._id}`)
       .set(...generateSessionHeader(adminToken));
@@ -105,8 +107,8 @@ describe('User', () => {
   });
 
   test('It should be able to get a delete user for admin (404)', async () => {
-    await createTestUserWithSession('john');
-    const [, adminToken] = await createTestUserWithSession('dominiek', 'admin');
+    await createTestUserWithSession(JWT_SECRET, 'john');
+    const [, adminToken] = await createTestUserWithSession(JWT_SECRET, 'dominiek', 'admin');
     const response = await request(app)
       .delete('/5a0e88cd0f94c22aae7f6f7c')
       .set(...generateSessionHeader(adminToken));
@@ -115,8 +117,8 @@ describe('User', () => {
   });
 
   test('It should be able to get a delete user for admin', async () => {
-    const [user] = await createTestUserWithSession('john');
-    const [, adminToken] = await createTestUserWithSession('dominiek', 'admin');
+    const [user] = await createTestUserWithSession(JWT_SECRET, 'john');
+    const [, adminToken] = await createTestUserWithSession(JWT_SECRET, 'dominiek', 'admin');
     const response = await request(app)
       .delete(`/${user._id}`)
       .set(...generateSessionHeader(adminToken));
@@ -127,8 +129,8 @@ describe('User', () => {
   });
 
   test('It should be able to get a delete user for admin', async () => {
-    const [user] = await createTestUserWithSession('john');
-    const [, adminToken] = await createTestUserWithSession('dominiek', 'admin');
+    const [user] = await createTestUserWithSession(JWT_SECRET, 'john');
+    const [, adminToken] = await createTestUserWithSession(JWT_SECRET, 'dominiek', 'admin');
     const response = await request(app)
       .post(`/${user._id}`)
       .send({ name: 'John Galt' })
