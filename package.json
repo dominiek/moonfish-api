@@ -1,0 +1,50 @@
+{
+  "name": "node-api-skeleton",
+  "version": "0.0.1",
+  "description": "Node API Skeleton",
+  "main": "dist",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon -w src --exec \"babel-node src/run.js\"",
+    "build": "babel src -s -D -d dist",
+    "prod": "node dist/run.js",
+    "start": "node dist/run.js",
+    "prestart": "yarn run -s build",
+    "lint": "eslint src",
+    "test": "jest -i src"
+  },
+  "dependencies": {
+    "babel-core": "^6.9.0",
+    "babel-polyfill": "^6.26.0",
+    "bcrypt": "^1.0.3",
+    "body-parser": "^1.13.3",
+    "compression": "^1.5.2",
+    "cors": "^2.7.1",
+    "express": "^4.13.3",
+    "express-async-wrapper": "^0.1.0",
+    "jsonwebtoken": "^8.1.0",
+    "mongoose": "^4.13.3",
+    "morgan": "^1.8.0",
+    "node-env-configuration": "^1.0.3",
+    "resource-router-middleware": "^0.6.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.9.0",
+    "babel-jest": "^21.2.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-stage-0": "^6.5.0",
+    "eslint": "^4.11.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jest": "^21.3.2",
+    "jest": "^21.2.1",
+    "nodemon": "^1.9.2",
+    "supertest": "^3.0.0"
+  },
+  "jest": {
+    "setupFiles": [
+      "<rootDir>/src/lib/setupTests.js"
+    ]
+  }
+}
