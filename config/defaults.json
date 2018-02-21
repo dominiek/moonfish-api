@@ -12,7 +12,8 @@
     "password": "admin.skeleton"
   },
   "jwt": {
-    "secret": "changeme"
+    "secret": "changeme1",
+    "adminsecret": "changeme2"
   },
   "tokensale": {
     "maxWhitelistedMembers": 20,

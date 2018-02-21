@@ -21,14 +21,17 @@ All routes are name spaced with a v1 version:
 
 ```
 GET     /1/info/details                # Get tokensale details
-POST    /1/users                       # Create user (signup)
-POST    /1/users/sessions              # Create session / jwt (login)
-GET     /1/users/self                  # Get my user info
-DELETE  /1/users/self                  # Delete my account
-POST    /1/users/self                  # Update my account
-GET     /1/users/:user_id              # Admin: Get user
-DELETE  /1/users/:user_id              # Admin: Delete user
-POST    /1/users/:user_id              # Admin: Update user
+POST    /1/applicants                  # Apply to participate
+POST    /1/applicants/sessions         # Exchange `magicToken` for temp JWT token
+POST    /1/applicants/register         # Complete registration (finishes KYC)
+POST    /1/applicants/participate      # Store account info
+POST    /1/users/sessions              # Admin: Create session / jwt (login)
+GET     /1/users/self                  # Admin: Get my user info
+DELETE  /1/users/self                  # Admin: Delete my account
+POST    /1/users/self                  # Admin: Update my account
+GET     /1/users/:user_id              # Admin: Admin: Get user
+DELETE  /1/users/:user_id              # Admin: Admin: Delete user
+POST    /1/users/:user_id              # Admin: Admin: Update user
 ```
 
 ## Install Dependencies
@@ -75,10 +78,12 @@ docker build -t ico-template-auction-api .
 - [x] Harden JWT tests
 - [x] Remove certain user routes for security
 - [x] Add info/details API
-- [ ] Core investor CRUD logic
-- [ ] Add magic token for each investor
-- [ ] Add investors API
+- [x] Core applicant logic
+- [ ] Applicant API
+- [ ] Add email
+- [ ] Add captcha security
 - [ ] Make sure application errors when defaults are not changed
 - [ ] Add unique communication keyphrase for each user
 - [ ] Add improved CORS security
 - [ ] Add improved security of investor data
+- [ ] Set limits to the amount of ether that's whitelisted
