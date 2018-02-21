@@ -1,5 +1,20 @@
 
-# Auction API for ICOs
+_Disclaimer: This is experimental work in progress. Do not use this in any production ICOs yet._
+
+# Moonfish API
+
+Moonfish is an open source platform for doing Token Sales and Initial Coin Offerings (ICOs).
+
+* ICO portal with marketing placeholders
+* Whitelist signup and management
+* Applicant communication
+* Token sale controls (deadlines, limits)
+* Token sale monitoring (projected funds raised, etc.)
+* KYC workflow
+* Legal templates for KYC compliance
+* Security best practices: Not storing passwords, Magic Tokens, SSL, strong hashes, expiring JWT, etc.
+* Full test coverage, quality code
+* Deployable on any containerized environment
 
 ## Directory Structure
 
