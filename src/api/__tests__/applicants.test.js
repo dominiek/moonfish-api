@@ -25,7 +25,10 @@ const config = {
   jwt: {
     secret: JWT_SECRET,
   },
+  app: { name: 'ICO Template', domain: 'ico.template' },
+  postmark: { apikey: '123' },
 };
+
 beforeAll(async () => {
   app.use('/', controller({ config }));
   app.use(jsonErrorHandler);
@@ -87,7 +90,7 @@ describe('Applicants', () => {
     let error;
 
     const email = 'john@galt.com';
-    const applicant = await apply({ acceptApplicants: true }, { email });
+    const applicant = await apply(config, { acceptApplicants: true }, { email });
 
     response = await request(app)
       .post('/register')
@@ -123,7 +126,7 @@ describe('Applicants', () => {
     let error;
 
     const email = 'john@galt.com';
-    const applicant = await apply({ acceptApplicants: true }, { email });
+    const applicant = await apply(config, { acceptApplicants: true }, { email });
     await register({ acceptApplicants: true }, applicant.magicToken, {
       email,
       firstName: 'John',

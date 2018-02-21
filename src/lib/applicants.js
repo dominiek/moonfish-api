@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import { randomBytes } from 'crypto';
 import jwt from 'jsonwebtoken';
 import Applicant from '../models/applicant';
+import { sendMail } from './mailer';
 
 require('babel-core/register');
 require('babel-polyfill');
@@ -10,7 +11,7 @@ require('babel-polyfill');
 const BCRYPT_SALT_ROUNDS = 10;
 const JWT_EXPIRY = '2h';
 
-export const apply = async (tokensaleStatus, {
+export const apply = async (config, tokensaleStatus, {
   email,
 }) => {
   if (!tokensaleStatus.acceptApplicants) {
@@ -33,7 +34,19 @@ export const apply = async (tokensaleStatus, {
   applicant.magicToken = magicToken;
   applicant.magicTokenGeneratedAt = Date.now();
   await applicant.save();
-  // Todo email
+
+  sendMail(config, {
+    to: email,
+    subject: `Welcome to ${config.app.name} Registration`,
+    body: `
+To proceed with your registration, use the following link:
+
+https://${config.app.domain}/register?magicToken=${magicToken}
+
+Best,
+The ${config.app.name} Team`,
+  });
+
   return applicant;
 };
 

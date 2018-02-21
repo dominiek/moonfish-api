@@ -25,7 +25,7 @@ export default ({ config }) => {
   // Apply to become a participant
   api.post('/apply', asyncWrap(async (req, res) => {
     const tokensaleStatus = await calculateTokensaleStatus(config.tokensale);
-    const rawApplicant = await apply(tokensaleStatus, req.body);
+    const rawApplicant = await apply(config, tokensaleStatus, req.body);
     const applicant = exportSafeApplicant(rawApplicant);
     res.json({ result: applicant });
   }));

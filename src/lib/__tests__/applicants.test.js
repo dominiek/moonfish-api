@@ -20,24 +20,29 @@ beforeEach(async () => {
 
 afterAll(teardownMongooseDb);
 
+const config = {
+  app: { name: 'ICO Template', domain: 'ico.template' },
+  postmark: { apikey: '123' },
+};
+
 describe('Applicants', () => {
   test('It should be able to apply and get a magic token (failures)', async () => {
     expect.assertions(3);
 
-    await apply({ acceptApplicants: false }, {}).catch((e) => {
+    await apply(config, { acceptApplicants: false }, {}).catch((e) => {
       expect(e.message).toMatch('not accepting applicants');
     });
-    await apply({ acceptApplicants: true }, {}).catch((e) => {
+    await apply(config, { acceptApplicants: true }, {}).catch((e) => {
       expect(e.message).toMatch('valid email address');
     });
-    await apply({ acceptApplicants: true }, { email: '' }).catch((e) => {
+    await apply(config, { acceptApplicants: true }, { email: '' }).catch((e) => {
       expect(e.message).toMatch('valid email address');
     });
   });
 
   test('It should be able to apply and get a magic token (success)', async () => {
     const email = 'info@dominiek.com';
-    const applicant = await apply({ acceptApplicants: true }, { email });
+    const applicant = await apply(config, { acceptApplicants: true }, { email });
     expect(applicant.magicToken.length).toBe(60);
     expect(applicant.email).toBe(email);
     expect(!!applicant.magicTokenGeneratedAt).toBe(true);
@@ -68,7 +73,7 @@ describe('Applicants', () => {
       expect(e.message).toMatch('No applicant found');
     });
     const email = 'info@dominiek.com';
-    const applicant = await apply({ acceptApplicants: true }, { email });
+    const applicant = await apply(config, { acceptApplicants: true }, { email });
     applicant.completedRegistration = true;
     await applicant.save();
     await register({ acceptApplicants: true }, applicant.magicToken, {}).catch((e) => {
@@ -83,7 +88,7 @@ describe('Applicants', () => {
 
   test('It should be able to register (success)', async () => {
     const email = 'info@dominiek.com';
-    const applicant = await apply({ acceptApplicants: true }, { email });
+    const applicant = await apply(config, { acceptApplicants: true }, { email });
     const registeredApplicant = await register({ acceptApplicants: true }, applicant.magicToken, {
       firstName: 'John',
       lastName: 'Galt',
@@ -108,7 +113,7 @@ describe('Applicants', () => {
       expect(e.message).toMatch('No applicant found');
     });
     const email = 'info@dominiek.com';
-    const applicant = await apply({ acceptApplicants: true }, { email });
+    const applicant = await apply(config, { acceptApplicants: true }, { email });
     await participate({ acceptParticipation: true }, applicant.magicToken, {}).catch((e) => {
       expect(e.message).toMatch('not completed');
     });
@@ -121,7 +126,7 @@ describe('Applicants', () => {
 
   test('It should be able to participate (success)', async () => {
     const email = 'info@dominiek.com';
-    const applicant = await apply({ acceptApplicants: true }, { email });
+    const applicant = await apply(config, { acceptApplicants: true }, { email });
     await register({ acceptApplicants: true }, applicant.magicToken, {
       firstName: 'John',
       lastName: 'Galt',
@@ -142,7 +147,7 @@ describe('Applicants', () => {
   });
 
   test('It should convert a user to a safe application object without magicToken', async () => {
-    const user = await apply({ acceptApplicants: true }, {
+    const user = await apply(config, { acceptApplicants: true }, {
       email: 'info@dominiek.com',
     });
     expect(!!exportSafeApplicant(user).email).toBe(true);

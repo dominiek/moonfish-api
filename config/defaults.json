@@ -4,12 +4,12 @@
     "host": "0.0.0.0"
   },
   "mongo": {
-    "uri": "mongodb://localhost/skeleton_dev"
+    "uri": "mongodb://localhost/ico-template_dev"
   },
   "admin": {
     "username": "admin",
-    "email": "admin@skeleton.ai",
-    "password": "admin.skeleton"
+    "email": "admin@ico-template.network",
+    "password": "admin.ico-template"
   },
   "jwt": {
     "secret": "changeme1",
@@ -19,5 +19,13 @@
     "maxWhitelistedApplicants": 20,
     "startTime": "Tue, 22 Mar 2018 00:00:00 GMT",
     "endTime": "Tue, 22 Apr 2018 00:00:00 GMT"
+  },
+  "app": {
+    "name": "ICO Template",
+    "domain": "tokensale.ico-template.network"
+  },
+  "postmark": {
+    "from": "no-reply@ico-template.network",
+    "apikey": ""
   }
 }
