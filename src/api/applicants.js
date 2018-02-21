@@ -11,19 +11,11 @@ import {
   encodeSession,
 } from '../lib/applicants';
 import {
+  calculateTokensaleStatus,
+} from '../lib/status';
+import {
   fetchApplicantSession,
 } from '../middleware/applicants';
-import Applicant from '../models/applicant';
-
-const calculateTokensaleStatus = async (config) => {
-  const numWhitelisted = await Applicant.count({ completedRegistration: true });
-  const acceptApplicants = numWhitelisted < config.maxWhitelistedApplicants;
-  const acceptParticipation = true;
-  return {
-    acceptApplicants,
-    acceptParticipation,
-  };
-};
 
 export default ({ config }) => {
   const api = Router();

@@ -19,7 +19,8 @@ const JWT_SECRET = 'testo1';
 const config = {
   tokensale: {
     maxWhitelistedApplicants: 20,
-    deadline: 'Tue, 22 Feb 2018 00:00:00 GMT',
+    startTime: (new Date(Date.now() - (24 * 3600 * 1000))).toUTCString(),
+    endTime: (new Date(Date.now() + (24 * 3600 * 1000))).toUTCString(),
   },
   jwt: {
     secret: JWT_SECRET,

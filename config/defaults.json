@@ -17,6 +17,7 @@
   },
   "tokensale": {
     "maxWhitelistedApplicants": 20,
-    "deadline": "Tue, 22 Feb 2018 00:00:00 GMT"
+    "startTime": "Tue, 22 Mar 2018 00:00:00 GMT",
+    "endTime": "Tue, 22 Apr 2018 00:00:00 GMT"
   }
 }

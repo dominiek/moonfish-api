@@ -21,10 +21,11 @@ All routes are name spaced with a v1 version:
 
 ```
 GET     /1/info/details                # Get tokensale details
-POST    /1/applicants                  # Apply to participate
-POST    /1/applicants/sessions         # Exchange `magicToken` for temp JWT token
-POST    /1/applicants/register         # Complete registration (finishes KYC)
-POST    /1/applicants/participate      # Store account info
+POST    /1/info/settings               # Admin: Configure tokensale
+POST    /1/applicants                  # Applicants: Apply to participate
+POST    /1/applicants/sessions         # Applicants: Exchange `magicToken` for temp JWT token
+POST    /1/applicants/register         # Applicants: Complete registration (finishes KYC)
+POST    /1/applicants/participate      # Applicants: Store account info
 POST    /1/users/sessions              # Admin: Create session / jwt (login)
 GET     /1/users/self                  # Admin: Get my user info
 DELETE  /1/users/self                  # Admin: Delete my account
@@ -82,8 +83,9 @@ docker build -t ico-template-auction-api .
 - [x] Applicant API + tests
 - [ ] Tokensale Status core logic + tests
 - [ ] Add email delivery
-- [ ] Add captcha security
 - [ ] Add unique communication keyphrase for each user
+- [ ] Add settings admin API
+- [ ] Add captcha security
 - [ ] Make sure application errors in prod when defaults are not changed
 - [ ] Add improved CORS security
 - [ ] Add improved encryption of applicant data
