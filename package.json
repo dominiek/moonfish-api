@@ -1,7 +1,7 @@
 {
-  "name": "node-api-skeleton",
+  "name": "moonfish-api",
   "version": "0.0.1",
-  "description": "Node API Skeleton",
+  "description": "Open Software for Token Distribution",
   "main": "dist",
   "license": "MIT",
   "scripts": {

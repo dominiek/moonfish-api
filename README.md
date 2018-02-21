@@ -35,7 +35,7 @@ Moonfish is an open source platform for doing Token Sales and Initial Coin Offer
 All routes are name spaced with a v1 version:
 
 ```
-GET     /1/info/details                # Get tokensale details
+GET     /1/info                        # Get tokensale details and status
 POST    /1/info/configuration          # Admin: Configure tokensale
 POST    /1/applicants                  # Applicants: Apply to participate
 POST    /1/applicants/sessions         # Applicants: Exchange `magicToken` for temp JWT token

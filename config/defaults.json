@@ -1,15 +1,15 @@
 {
   "bind": {
-    "port": 3005,
+    "port": 1306,
     "host": "0.0.0.0"
   },
   "mongo": {
-    "uri": "mongodb://localhost/ico-template_dev"
+    "uri": "mongodb://localhost/moonfish_dev"
   },
   "admin": {
     "username": "admin",
-    "email": "admin@ico-template.network",
-    "password": "admin.ico-template"
+    "email": "admin@moonfish.one",
+    "password": "admin.moonfish"
   },
   "jwt": {
     "secret": "changeme1",
@@ -21,11 +21,11 @@
     "endTime": "Tue, 22 Apr 2018 00:00:00 GMT"
   },
   "app": {
-    "name": "ICO Template",
-    "domain": "tokensale.ico-template.network"
+    "name": "Moonfish",
+    "domain": "localhost"
   },
   "postmark": {
-    "from": "no-reply@ico-template.network",
+    "from": "no-reply@localhost",
     "apikey": ""
   }
 }
