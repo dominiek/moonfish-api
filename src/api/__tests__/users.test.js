@@ -15,7 +15,7 @@ import {
 const JWT_SECRET = 'testo';
 
 beforeAll(async () => {
-  app.use('/', controller({ config: { jwt: { secret: JWT_SECRET } } }));
+  app.use('/', controller({ config: { jwt: { adminSecret: JWT_SECRET } } }));
   app.use(jsonErrorHandler);
 
   await setupMongooseDb();
@@ -28,7 +28,7 @@ beforeEach(async () => {
 
 afterAll(teardownMongooseDb);
 
-describe('User', () => {
+describe('Users', () => {
   test('It should be able to register and authenticate a user', async () => {
     let response;
     let result;

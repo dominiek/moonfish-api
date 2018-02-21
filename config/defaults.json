@@ -16,7 +16,7 @@
     "adminsecret": "changeme2"
   },
   "tokensale": {
-    "maxWhitelistedMembers": 20,
+    "maxWhitelistedApplicants": 20,
     "deadline": "Tue, 22 Feb 2018 00:00:00 GMT"
   }
 }

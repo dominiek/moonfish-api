@@ -40,11 +40,30 @@ export const apply = async (tokensaleStatus, {
 export const exportSafeApplicant = (applicant) => {
   const object = applicant.toObject();
   const {
-    email, firstName, lastName, createdAt,
+    email,
+    firstName,
+    lastName,
+    createdAt,
+    completedRegistration,
+    isParticipating,
+    ethAmount,
+    ethAddress,
   } = object;
   return {
-    email, firstName, lastName, createdAt,
+    email,
+    firstName,
+    lastName,
+    createdAt,
+    completedRegistration,
+    isParticipating,
+    ethAmount,
+    ethAddress,
   };
+};
+
+export const isValidMagicToken = async (magicToken) => {
+  const applicant = await Applicant.findOne({ magicToken });
+  return !!applicant;
 };
 
 export const encodeSession = (jwtSecret, magicToken) =>

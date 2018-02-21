@@ -8,7 +8,7 @@ export const fetchSession = config => asyncWrap(async (res, req, next) => {
   if (!authorizationHeader) return next();
   authorizationHeader = authorizationHeader.split(' ');
   if (authorizationHeader.length !== 2) throw new Error('Invalid Authorization Token');
-  const userId = decodeSession(config.jwt.secret, authorizationHeader[1]);
+  const userId = decodeSession(config.jwt.adminSecret, authorizationHeader[1]);
   if (userId) {
     res.user = await User.findById(userId);
   }

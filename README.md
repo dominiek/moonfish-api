@@ -78,12 +78,13 @@ docker build -t ico-template-auction-api .
 - [x] Harden JWT tests
 - [x] Remove certain user routes for security
 - [x] Add info/details API
-- [x] Core applicant logic
-- [ ] Applicant API
-- [ ] Add email
+- [x] Core applicant logic + tests
+- [x] Applicant API + tests
+- [ ] Tokensale Status core logic + tests
+- [ ] Add email delivery
 - [ ] Add captcha security
-- [ ] Make sure application errors when defaults are not changed
 - [ ] Add unique communication keyphrase for each user
+- [ ] Make sure application errors in prod when defaults are not changed
 - [ ] Add improved CORS security
-- [ ] Add improved security of investor data
+- [ ] Add improved encryption of applicant data
 - [ ] Set limits to the amount of ether that's whitelisted

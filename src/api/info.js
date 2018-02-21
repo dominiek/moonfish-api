@@ -8,7 +8,7 @@ export default ({ config }) => {
     const result = {
       deadlineString: config.tokensale.deadline,
       deadlineTs: Date.parse(config.tokensale.deadline),
-      maxWhitelistedMembers: config.tokensale.maxWhitelistedMembers,
+      maxWhitelistedApplicants: config.tokensale.maxWhitelistedApplicants,
     };
     res.json({ result });
   });

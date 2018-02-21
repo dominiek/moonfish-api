@@ -29,7 +29,7 @@ export default ({ config }) => {
   // Create session (login)
   api.post('/sessions', asyncWrap(async (req, res) => {
     const rawUser = await authenticate(req.body.email, req.body.password);
-    const token = encodeSession(config.jwt.secret, rawUser._id);
+    const token = encodeSession(config.jwt.adminSecret, rawUser._id);
     const user = exportSafeUser(rawUser);
     res.json({ result: { user, token } });
   }));
