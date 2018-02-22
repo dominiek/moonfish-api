@@ -9,6 +9,7 @@ import {
   exportSafeApplicant,
   isValidMagicToken,
   encodeSession,
+  getApplicantByMagicToken,
 } from '../lib/applicants';
 import {
   calculateTokensaleStatus,
@@ -34,8 +35,10 @@ export default ({ config }) => {
   api.post('/sessions', asyncWrap(async (req, res) => {
     const validMagicToken = await isValidMagicToken(req.body.magicToken);
     if (!validMagicToken) throw new Error('Invalid magic token');
+    const rawApplicant = await getApplicantByMagicToken(req.body.magicToken);
     const token = encodeSession(config.jwt.secret, req.body.magicToken);
-    res.json({ result: { token } });
+    const applicant = exportSafeApplicant(rawApplicant);
+    res.json({ result: { token, applicant } });
   }));
 
   // Get session

@@ -43,7 +43,7 @@ describe('Applicants', () => {
   test('It should be able to apply and get a magic token (success)', async () => {
     const email = 'info@dominiek.com';
     const applicant = await apply(config, { acceptApplicants: true }, { email });
-    expect(applicant.magicToken.length).toBe(60);
+    expect(applicant.magicToken.length).toBe(128);
     expect(applicant.email).toBe(email);
     expect(!!applicant.magicTokenGeneratedAt).toBe(true);
     expect(applicant.isParticipating).toBe(false);

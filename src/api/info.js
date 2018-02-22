@@ -9,7 +9,7 @@ export default ({ config }) => {
   const api = Router();
 
   api.get('/', asyncWrap(async (req, res) => {
-    const info = {
+    const details = {
       startTime: config.tokensale.startTime,
       startTimeTs: Date.parse(config.tokensale.startTime),
       endTime: config.tokensale.endTime,
@@ -17,7 +17,7 @@ export default ({ config }) => {
       maxWhitelistedApplicants: config.tokensale.maxWhitelistedApplicants,
     };
     const status = await calculateTokensaleStatus(config.tokensale);
-    res.json({ result: { info, status } });
+    res.json({ result: { details, status } });
   }));
 
   return api;

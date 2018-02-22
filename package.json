@@ -5,7 +5,7 @@
   "main": "dist",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon -w src --exec \"babel-node src/run.js\"",
+    "dev": "nodemon -w src --exec \"MOCK_EMAIL=true babel-node src/run.js\"",
     "build": "babel src -s -D -d dist",
     "prod": "node dist/run.js",
     "start": "node dist/run.js",

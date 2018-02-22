@@ -99,8 +99,10 @@ docker build -t ico-template-auction-api .
 - [x] Tokensale Status core logic + tests
 - [x] Add email delivery
 - [ ] Add settings admin API
+- [ ] Unit test for JWT expiry
 - [ ] Improve magic token
 - [ ] HTML email templates
+- [ ] Make sure magic tokens expire
 - [ ] Add unique communication keyphrase for each user
 - [ ] Add captcha security
 - [ ] Make sure application errors in prod when defaults are not changed

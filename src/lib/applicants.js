@@ -1,6 +1,5 @@
 
-import bcrypt from 'bcrypt';
-import { randomBytes } from 'crypto';
+import { randomBytes, createHash } from 'crypto';
 import jwt from 'jsonwebtoken';
 import Applicant from '../models/applicant';
 import { sendMail } from './mailer';
@@ -8,7 +7,6 @@ import { sendMail } from './mailer';
 require('babel-core/register');
 require('babel-polyfill');
 
-const BCRYPT_SALT_ROUNDS = 10;
 const JWT_EXPIRY = '2h';
 
 export const apply = async (config, tokensaleStatus, {
@@ -21,9 +19,10 @@ export const apply = async (config, tokensaleStatus, {
   if (!email || !email.length) {
     throw new Error('Need a valid email address');
   }
-  const salt = await bcrypt.genSalt(BCRYPT_SALT_ROUNDS);
-  const randStr = randomBytes(256).toString();
-  const magicToken = await bcrypt.hash(email + randStr, salt);
+  const randStr = randomBytes(512).toString('hex');
+  const magicToken = createHash('sha512')
+    .update(email + randStr, 'utf8')
+    .digest('hex');
 
   let applicant = await Applicant.findOne({ email });
   if (!applicant) {
@@ -74,8 +73,10 @@ export const exportSafeApplicant = (applicant) => {
   };
 };
 
+export const getApplicantByMagicToken = magicToken => Applicant.findOne({ magicToken });
+
 export const isValidMagicToken = async (magicToken) => {
-  const applicant = await Applicant.findOne({ magicToken });
+  const applicant = await getApplicantByMagicToken(magicToken);
   return !!applicant;
 };
 
