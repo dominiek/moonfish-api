@@ -122,9 +122,14 @@ export const register = async (tokensaleStatus, magicToken, {
     throw new Error('Need a valid ethAmount');
   }
 
+  const normalizedEthAmount = parseFloat(ethAmount, 10);
+  if (Number.isNaN(normalizedEthAmount) || normalizedEthAmount <= 0.0) {
+    throw new Error('Need a valid ethAmount');
+  }
+
   applicant.firstName = firstName;
   applicant.lastName = lastName;
-  applicant.ethAmount = ethAmount;
+  applicant.ethAmount = normalizedEthAmount;
   applicant.completedRegistration = true;
 
   await applicant.save();

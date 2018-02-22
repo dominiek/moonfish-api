@@ -98,14 +98,16 @@ docker build -t ico-template-auction-api .
 - [x] Applicant API + tests
 - [x] Tokensale Status core logic + tests
 - [x] Add email delivery
-- [ ] Add settings admin API
+- [x] Improve magic token
+- [x] Add ethAmount validation
+- [ ] Set limits to the amount of ether that's whitelisted
+- [ ] Allow oversubscribing (optionally)
 - [ ] Unit test for JWT expiry
-- [ ] Improve magic token
-- [ ] HTML email templates
 - [ ] Make sure magic tokens expire
 - [ ] Add unique communication keyphrase for each user
-- [ ] Add captcha security
 - [ ] Make sure application errors in prod when defaults are not changed
 - [ ] Add improved CORS security
 - [ ] Add improved encryption of applicant data
-- [ ] Set limits to the amount of ether that's whitelisted
+- [ ] HTML email templates
+- [ ] Add settings admin API
+- [ ] Add captcha security
