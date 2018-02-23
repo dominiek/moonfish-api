@@ -4,17 +4,11 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
-import nodeEnvConfiguration from 'node-env-configuration';
 import initializeDb from './db';
 import middleware from './middleware';
 import api from './api';
 import setupFixtures from './lib/setupFixtures';
-import configDefaults from '../config/defaults.json';
-
-const config = nodeEnvConfiguration({
-  defaults: configDefaults,
-  prefix: 'api',
-});
+import config from './config';
 
 const app = express();
 app.server = http.createServer(app);

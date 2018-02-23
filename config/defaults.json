@@ -9,11 +9,11 @@
   "admin": {
     "username": "admin",
     "email": "admin@moonfish.one",
-    "password": "admin.moonfish"
+    "password": "changeme"
   },
   "jwt": {
-    "secret": "changeme1",
-    "adminsecret": "changeme2"
+    "secret": "changeme",
+    "adminsecret": "changeme"
   },
   "tokensale": {
     "maxWhitelistedApplicants": 20,
@@ -26,6 +26,6 @@
   },
   "postmark": {
     "from": "no-reply@localhost",
-    "apikey": ""
+    "apikey": "changeme"
   }
 }
