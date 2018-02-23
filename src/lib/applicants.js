@@ -8,6 +8,7 @@ require('babel-core/register');
 require('babel-polyfill');
 
 const JWT_EXPIRY = '2h';
+const MAGIC_TOKEN_EXPIRY_SECONDS = 3600;
 
 export const apply = async (config, tokensaleStatus, {
   email,
@@ -80,6 +81,14 @@ export const isValidMagicToken = async (magicToken) => {
   return !!applicant;
 };
 
+export const isExpiredMagicToken = (magicTokenGeneratedAt, setNow = null) => {
+  const now = setNow || Date.now();
+  if ((Date.parse(magicTokenGeneratedAt) + (MAGIC_TOKEN_EXPIRY_SECONDS * 1000)) < now) {
+    return true;
+  }
+  return false;
+};
+
 export const encodeSession = (jwtSecret, magicToken) =>
   jwt.sign({ magicToken }, jwtSecret, { expiresIn: JWT_EXPIRY });
 
@@ -105,6 +114,9 @@ export const register = async (tokensaleStatus, magicToken, {
   const applicant = await Applicant.findOne({ magicToken });
   if (!applicant) {
     throw new Error('No applicant found with that magic token');
+  }
+  if (isExpiredMagicToken(applicant.magicTokenGeneratedAt)) {
+    throw new Error('Magic token is expired');
   }
   if (applicant.completedRegistration) {
     throw new Error('Applicant already completed registration');
@@ -149,6 +161,9 @@ export const participate = async (tokensaleStatus, magicToken, {
   const applicant = await Applicant.findOne({ magicToken });
   if (!applicant) {
     throw new Error('No applicant found with that magic token');
+  }
+  if (isExpiredMagicToken(applicant.magicTokenGeneratedAt)) {
+    throw new Error('Magic token is expired');
   }
   if (!applicant.completedRegistration) {
     throw new Error('Registration was not completed');

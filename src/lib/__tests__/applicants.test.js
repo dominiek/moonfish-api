@@ -124,6 +124,19 @@ describe('Applicants', () => {
     });
   });
 
+  test('It should be able to participate (expired)', async () => {
+    expect.assertions(1);
+
+    const email = 'info@dominiek.com';
+    const applicant = await apply(config, { acceptApplicants: true }, { email });
+    applicant.completedRegistration = true;
+    applicant.magicTokenGeneratedAt = Date.now() - (2 * 3600 * 1000);
+    await applicant.save();
+    await participate({ acceptParticipation: true }, applicant.magicToken, {}).catch((e) => {
+      expect(e.message).toMatch('is expired');
+    });
+  });
+
   test('It should be able to participate (success)', async () => {
     const email = 'info@dominiek.com';
     const applicant = await apply(config, { acceptApplicants: true }, { email });
