@@ -100,6 +100,7 @@ docker build -t ico-template-auction-api .
 - [x] Add email delivery
 - [x] Improve magic token
 - [x] Add ethAmount validation
+- [x] Allow JWT based access to register API call
 - [ ] Set limits to the amount of ether that's whitelisted
 - [ ] Allow oversubscribing (optionally)
 - [ ] Unit test for JWT expiry

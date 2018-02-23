@@ -43,21 +43,24 @@ export default ({ config }) => {
 
   // Get session
   api.get('/sessions', (req, res) => {
-    res.json({ result: req.applicant });
+    if (!req.applicant) throw new Error('Authentication required');
+    res.json({ result: exportSafeApplicant(req.applicant) });
   });
 
   // Finalize registration for applicant
   api.post('/register', asyncWrap(async (req, res) => {
+    if (!req.applicant) throw new Error('Authentication required');
     const tokensaleStatus = await calculateTokensaleStatus(config.tokensale);
-    const rawApplicant = await register(tokensaleStatus, req.body.magicToken, req.body);
+    const rawApplicant = await register(tokensaleStatus, req.applicant.magicToken, req.body);
     const applicant = exportSafeApplicant(rawApplicant);
     res.json({ result: applicant });
   }));
 
   // Participate in token sale
   api.post('/participate', asyncWrap(async (req, res) => {
+    if (!req.applicant) throw new Error('Authentication required');
     const tokensaleStatus = await calculateTokensaleStatus(config.tokensale);
-    const rawApplicant = await participate(tokensaleStatus, req.body.magicToken, req.body);
+    const rawApplicant = await participate(tokensaleStatus, req.applicant.magicToken, req.body);
     const applicant = exportSafeApplicant(rawApplicant);
     res.json({ result: applicant });
   }));

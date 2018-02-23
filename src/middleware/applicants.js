@@ -14,7 +14,7 @@ export const fetchApplicantSession = config => asyncWrap(async (res, req, next) 
   const magicToken = decodeSession(config.jwt.secret, authorizationHeader[1]);
   if (magicToken) {
     const rawApplicant = await Applicant.findOne({ magicToken });
-    res.applicant = exportSafeApplicant(rawApplicant);
+    res.applicant = rawApplicant;
   }
   return next();
 });

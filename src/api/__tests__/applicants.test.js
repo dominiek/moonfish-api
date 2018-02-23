@@ -93,25 +93,33 @@ describe('Applicants', () => {
     const applicant = await apply(config, { acceptApplicants: true }, { email });
 
     response = await request(app)
-      .post('/register')
-      .send({ magicToken: 'wrong' });
+      .post('/sessions')
+      .send({ magicToken: applicant.magicToken });
     ({ result, error } = response.body);
-    expect(error.message).toBe('No applicant found with that magic token');
+    expect(error).toBe(undefined);
+    const { token } = result;
+    expect(!!token).toBe(true);
 
     response = await request(app)
       .post('/register')
-      .send({ magicToken: applicant.magicToken });
+      .set(...generateSessionHeader(`${token}aa`));
+    ({ result, error } = response.body);
+    expect(error.message).toBe('invalid signature');
+
+    response = await request(app)
+      .post('/register')
+      .set(...generateSessionHeader(token));
     ({ result, error } = response.body);
     expect(error.message).toBe('Need a valid firstName');
 
     response = await request(app)
       .post('/register')
       .send({
-        magicToken: applicant.magicToken,
         firstName: 'John',
         lastName: 'Galt',
         ethAmount: 3.0,
-      });
+      })
+      .set(...generateSessionHeader(token));
     ({ result, error } = response.body);
     expect(error).toBe(undefined);
     expect(result.email).toBe(email);
@@ -135,14 +143,22 @@ describe('Applicants', () => {
     });
 
     response = await request(app)
-      .post('/participate')
-      .send({ magicToken: 'wrong' });
+      .post('/sessions')
+      .send({ magicToken: applicant.magicToken });
     ({ result, error } = response.body);
-    expect(error.message).toBe('No applicant found with that magic token');
+    expect(error).toBe(undefined);
+    const { token } = result;
+    expect(!!token).toBe(true);
 
     response = await request(app)
       .post('/participate')
-      .send({ magicToken: applicant.magicToken });
+      .send({ });
+    ({ result, error } = response.body);
+    expect(error.message).toBe('Authentication required');
+
+    response = await request(app)
+      .post('/participate')
+      .set(...generateSessionHeader(token));
     ({ result, error } = response.body);
     expect(error.message).toBe('Need a valid ethAddress');
 
@@ -151,7 +167,8 @@ describe('Applicants', () => {
       .send({
         magicToken: applicant.magicToken,
         ethAddress: '0x00',
-      });
+      })
+      .set(...generateSessionHeader(token));
     ({ result, error } = response.body);
     expect(error).toBe(undefined);
     expect(result.email).toBe(email);
