@@ -60,6 +60,13 @@ describe('Applicants', () => {
     expect(() => decodeSession('bad', goodToken)).toThrow('invalid signature');
   });
 
+  test('It should be able to have a an expiration on the session', async () => {
+    const magicToken = 'mahou da yo';
+    const token = encodeSession('bla', magicToken, '1s');
+    await new Promise(accept => setTimeout(() => accept(), 3000));
+    expect(() => decodeSession('bla', token)).toThrow('jwt expired');
+  });
+
   test('It should be able to register (failures)', async () => {
     expect.assertions(5);
 

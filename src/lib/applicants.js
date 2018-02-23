@@ -89,8 +89,8 @@ export const isExpiredMagicToken = (magicTokenGeneratedAt, setNow = null) => {
   return false;
 };
 
-export const encodeSession = (jwtSecret, magicToken) =>
-  jwt.sign({ magicToken }, jwtSecret, { expiresIn: JWT_EXPIRY });
+export const encodeSession = (jwtSecret, magicToken, expiresIn) =>
+  jwt.sign({ magicToken }, jwtSecret, { expiresIn: (expiresIn || JWT_EXPIRY) });
 
 export const decodeSession = (jwtSecret, token) => {
   const payload = jwt.verify(token, jwtSecret);
