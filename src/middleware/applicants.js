@@ -2,7 +2,6 @@
 import asyncWrap from 'express-async-wrapper';
 import {
   decodeSession,
-  exportSafeApplicant,
 } from '../lib/applicants';
 import Applicant from '../models/applicant';
 

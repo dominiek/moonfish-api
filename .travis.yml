@@ -1,3 +1,9 @@
 language: node_js
 node_js:
   - "8.9.1"
+services:
+  - mongodb
+script:
+  - yarn lint
+  - yarn test
+cache: yarn
