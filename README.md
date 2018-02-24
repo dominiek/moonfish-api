@@ -1,4 +1,6 @@
 
+[![Build Status](https://travis-ci.org/rekallai/moonfish-api.png?branch=master)](https://travis-ci.org/rekallai/moonfish-api)
+
 _Disclaimer: This is experimental work in progress. Do not use this in any production ICOs yet._
 
 # Moonfish API
@@ -106,8 +108,10 @@ docker build -t ico-template-auction-api .
 - [x] Make sure application errors in prod when defaults are not changed
 - [x] Allow oversubscribing (optionally)
 - [x] Set limits to the amount of ether that's whitelisted
-- [ ] Setup CI
+- [x] Setup CI
+- [ ] Setup coveralls code coverage reporting
 - [ ] Improve documentation
+- [ ] Add license information and warnings
 - [ ] Add unique communication keyphrase for each user
 - [ ] Add improved CORS security
 - [ ] Add improved encryption of applicant data
