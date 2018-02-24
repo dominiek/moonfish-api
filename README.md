@@ -1,5 +1,5 @@
 
-[![Build Status](https://travis-ci.org/rekallai/moonfish-api.png?branch=master)](https://travis-ci.org/rekallai/moonfish-api)
+[![Build Status](https://img.shields.io/travis/rekallai/moonfish-api.svg?branch=master&style=flat-square)](https://travis-ci.org/rekallai/moonfish-api)
 
 _Disclaimer: This is experimental work in progress. Do not use this in any production ICOs yet._
 
