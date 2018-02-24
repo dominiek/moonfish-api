@@ -18,6 +18,24 @@ Moonfish is an open source platform for doing Token Sales and Initial Coin Offer
 * Full test coverage, quality code
 * Deployable on any containerized environment
 
+## Security & Reliability Features
+
+* No user passwords are solicited or stored.
+* No private keys or ethereum wallets are managed by the system.
+* Uses temporary "magic tokens" to authenticate. Tokens are generated with a 512 random byte seed and SHA512
+* Admin passwords are stored using BCRYPT
+* Email verification using Postmark (DKIM and SPF)
+* Full unit test coverage of business logic and APIs
+* AirBnB ES lint standard enforced
+* CI integration of unit tests and linting
+* Auto check for misconfiguration (default keys) when running in production mode
+* Client-server authentication is done using JSON Web Tokens. Different keys are used for admin accounts.
+* Both JWT and and magic tokens expire within short time period (2h and 1h respectively)
+* All solicited input fields are validated and that validation is unit tested
+* Planned: Solicited information from users is stored in an encrypted way in DB
+* Planned: Each user gets two secret words to authenticate official communication (anti-phishing)
+* Planned: Strict CORS configuration to prevent cross-site contamination
+
 ## Directory Structure
 
 * `package.json` - Configure dependencies
@@ -80,9 +98,14 @@ All values in `config/defaults.json` can be overwritten using environment variab
 - `API_BIND_HOST` - Host to bind to, defaults to `"0.0.0.0"`
 - `API_BIND_PORT` - Port to bind to, defaults to `3005`
 - `API_MONGO_URI` - MongoDB URI to connect to, defaults to `mongodb://localhost/skeleton_dev`
-- `API_ADMIN_EMAIL` - Default root admin user `admin@skeleton.ai`
-- `API_ADMIN_PASSWORD` - Default root admin password `admin.skeleton`
-- `API_JWT_SECRET` - Default root admin password `changeme`
+- `API_ADMIN_EMAIL` - Default root admin user `admin@moonfish.one`
+- `API_ADMIN_PASSWORD` - Default root admin password `changeme`
+- `API_JWT_SECRET` - Secret key for generating JWT tokens `changeme`
+- `API_JWT_ADMINSECRET` - Secret key for generating admin JWT tokens `changeme`
+- `API_APP_NAME` - Application name `Moonfish`
+- `API_APP_DOMAIN` - Domain of token sale web interface `localhost`
+- `API_POSTMARK_APIKEY` - Postmark API key - used for email communication
+- `API_POSTMARK_FROM` - From address used for mail communication
 
 ## Building the Container
 
@@ -109,8 +132,8 @@ docker build -t ico-template-auction-api .
 - [x] Allow oversubscribing (optionally)
 - [x] Set limits to the amount of ether that's whitelisted
 - [x] Setup CI
-- [ ] Setup coveralls code coverage reporting
 - [ ] Improve documentation
+- [ ] Setup coveralls code coverage reporting
 - [ ] Add license information and warnings
 - [ ] Add unique communication keyphrase for each user
 - [ ] Add improved CORS security
