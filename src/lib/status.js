@@ -10,7 +10,7 @@ export const calculateTokensaleStatus = async (config, setNowTs = null) => {
   const numWhitelisted = await Applicant.count({ completedRegistration: true });
   const isOverSubscribed = (numWhitelisted >= config.maxWhitelistedApplicants);
   const isActive = (nowTs > startTimeTs) && (nowTs < endTimeTs);
-  const acceptApplicants = !isOverSubscribed;
+  const acceptApplicants = !isOverSubscribed || config.allowOversubscribedApplications;
   const acceptParticipation = isActive;
   return {
     isActive,

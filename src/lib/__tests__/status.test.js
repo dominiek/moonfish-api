@@ -24,6 +24,7 @@ describe('Status', () => {
       startTime: 'Tue, 22 Mar 2018 00:00:00 GMT',
       endTime: 'Tue, 22 Apr 2018 00:00:00 GMT',
       maxWhitelistedApplicants: 20,
+      allowOversubscribedApplications: false,
     }, new Date(2018, 2, 21));
     expect(status.isOverSubscribed).toBe(false);
     expect(status.isActive).toBe(false);
@@ -35,6 +36,7 @@ describe('Status', () => {
       startTime: 'Tue, 22 Mar 2018 00:00:00 GMT',
       endTime: 'Tue, 22 Apr 2018 00:00:00 GMT',
       maxWhitelistedApplicants: 20,
+      allowOversubscribedApplications: false,
     }, new Date(2018, 2, 23));
     expect(status.isOverSubscribed).toBe(false);
     expect(status.isActive).toBe(true);
@@ -49,10 +51,23 @@ describe('Status', () => {
       startTime: 'Tue, 22 Mar 2018 00:00:00 GMT',
       endTime: 'Tue, 22 Apr 2018 00:00:00 GMT',
       maxWhitelistedApplicants: 2,
+      allowOversubscribedApplications: false,
     }, new Date(2018, 2, 21));
     expect(status.isOverSubscribed).toBe(true);
     expect(status.isActive).toBe(false);
     expect(status.acceptApplicants).toBe(false);
+    expect(status.acceptParticipation).toBe(false);
+
+    // Not active, oversubscribed
+    status = await calculateTokensaleStatus({
+      startTime: 'Tue, 22 Mar 2018 00:00:00 GMT',
+      endTime: 'Tue, 22 Apr 2018 00:00:00 GMT',
+      maxWhitelistedApplicants: 2,
+      allowOversubscribedApplications: true,
+    }, new Date(2018, 2, 21));
+    expect(status.isOverSubscribed).toBe(true);
+    expect(status.isActive).toBe(false);
+    expect(status.acceptApplicants).toBe(true);
     expect(status.acceptParticipation).toBe(false);
   });
 });

@@ -104,9 +104,10 @@ docker build -t ico-template-auction-api .
 - [x] Make sure magic tokens expire
 - [x] Unit test for JWT expiry
 - [x] Make sure application errors in prod when defaults are not changed
+- [x] Allow oversubscribing (optionally)
 - [ ] Set limits to the amount of ether that's whitelisted
-- [ ] Allow oversubscribing (optionally)
 - [ ] Setup CI
+- [ ] Improve documentation
 - [ ] Add unique communication keyphrase for each user
 - [ ] Add improved CORS security
 - [ ] Add improved encryption of applicant data
