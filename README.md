@@ -132,12 +132,14 @@ docker build -t ico-template-auction-api .
 - [x] Allow oversubscribing (optionally)
 - [x] Set limits to the amount of ether that's whitelisted
 - [x] Setup CI
-- [ ] Improve documentation
 - [ ] Setup coveralls code coverage reporting
-- [ ] Add license information and warnings
+- [ ] HTML email templates
+- [ ] Use native Node instead of babel
+- [ ] Improve documentation
+- [ ] Add license information
+- [ ] Add disclaimers
 - [ ] Add unique communication keyphrase for each user
 - [ ] Add improved CORS security
 - [ ] Add improved encryption of applicant data
-- [ ] HTML email templates
 - [ ] Add settings admin API
 - [ ] Add captcha security
