@@ -1,9 +1,9 @@
 
-import { setupMongooseDb, teardownMongooseDb } from '../../lib/testUtils';
-import Applicant from '../../models/applicant';
-import {
+const { setupMongooseDb, teardownMongooseDb } = require('../../lib/testUtils');
+const Applicant = require('../../models/applicant');
+const {
   calculateTokensaleStatus,
-} from '../status';
+} = require('../status');
 
 beforeAll(async () => {
   await setupMongooseDb();

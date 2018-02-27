@@ -1,14 +1,14 @@
 
-import { setupMongooseDb, teardownMongooseDb } from '../../lib/testUtils';
-import Applicant from '../../models/applicant';
-import {
+const { setupMongooseDb, teardownMongooseDb } = require('../../lib/testUtils');
+const Applicant = require('../../models/applicant');
+const {
   apply,
   encodeSession,
   decodeSession,
   register,
   participate,
   exportSafeApplicant,
-} from '../applicants';
+} = require('../applicants');
 
 beforeAll(async () => {
   await setupMongooseDb();

@@ -1,12 +1,12 @@
 
-import request from 'supertest';
-import { app } from '../../../src';
-import api from '../info';
-import {
+const request = require('supertest');
+const { app } = require('../../../src');
+const api = require('../info');
+const {
   setupMongooseDb,
   teardownMongooseDb,
-} from '../../lib/testUtils';
-import Applicant from '../../models/applicant';
+} = require('../../lib/testUtils');
+const Applicant = require('../../models/applicant');
 
 const config = {
   tokensale: {

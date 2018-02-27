@@ -1,7 +1,7 @@
 
-import request from 'supertest';
-import { app } from '../../../src';
-import api from '../index';
+const request = require('supertest');
+const { app } = require('../../../src');
+const api = require('../index');
 
 app.use('/', api({}));
 

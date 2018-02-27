@@ -1,15 +1,12 @@
 
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import { createHash } from 'crypto';
-import User from '../models/user';
-
-require('babel-core/register');
-require('babel-polyfill');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const { createHash } = require('crypto');
+const User = require('../models/user');
 
 const BCRYPT_SALT_ROUNDS = 10;
 
-export const signup = async ({
+exports.signup = async ({
   username,
   email,
   password,
@@ -44,7 +41,7 @@ export const signup = async ({
   return user;
 };
 
-export const authenticate = async (email, password) => {
+exports.authenticate = async (email, password) => {
   if (!email) throw new Error('Email cannot be blank');
   if (!password || !password.length) throw new Error('Password cannot be blank');
   const user = await User.findOne({ email });
@@ -57,27 +54,27 @@ export const authenticate = async (email, password) => {
   throw new Error('Incorrect email or password');
 };
 
-export const exportSafeUser = (user) => {
+exports.exportSafeUser = (user) => {
   const object = user.toObject();
   delete object.hash;
   return object;
 };
 
-export const encodeSession = (jwtSecret, userId) => jwt.sign({ userId }, jwtSecret);
+exports.encodeSession = (jwtSecret, userId) => jwt.sign({ userId }, jwtSecret);
 
-export const decodeSession = (jwtSecret, token) => {
+exports.decodeSession = (jwtSecret, token) => {
   const payload = jwt.verify(token, jwtSecret);
   if (!payload || !payload.userId) throw new Error('Invalid Token');
   return payload.userId;
 };
 
-export const hasRole = (user, role) => user.role === role;
+exports.hasRole = (user, role) => user.role === role;
 
-export const requireRole = (user, role) => {
-  if (!hasRole(user, role)) throw new Error('Permission denied');
+exports.requireRole = (user, role) => {
+  if (!exports.hasRole(user, role)) throw new Error('Permission denied');
 };
 
-export const forgotPassword = async (user) => {
+exports.forgotPassword = async (user) => {
   const hash = createHash('sha256');
   hash.update(`${user.email}-${user.name}-${Date.now()}`);
   const resetPasswordToken = hash.digest('hex');
@@ -86,16 +83,16 @@ export const forgotPassword = async (user) => {
   return resetPasswordToken;
 };
 
-export const setPassword = async (user, newPassword) => {
+exports.setPassword = async (user, newPassword) => {
   const salt = await bcrypt.genSalt(BCRYPT_SALT_ROUNDS);
   const hash = await bcrypt.hash(newPassword, salt);
   user.set({ hash });
   await user.save();
 };
 
-export const resetPassword = async (user, resetPasswordToken, newPassword) => {
+exports.resetPassword = async (user, resetPasswordToken, newPassword) => {
   if (!user.resetPasswordToken || user.resetPasswordToken !== resetPasswordToken) {
     throw new Error('Invalid reset password token given, could not reset password');
   }
-  await setPassword(user, newPassword);
+  await exports.setPassword(user, newPassword);
 };

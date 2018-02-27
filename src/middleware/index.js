@@ -1,7 +1,8 @@
-import { Router } from 'express';
+const { Router } = require('express');
+const asyncRouter = require('../lib/asyncRouter');
 
-export default () => {
-  const routes = Router();
+module.exports = () => {
+  const routes = asyncRouter(Router());
 
   // add middleware here
 

@@ -1,11 +1,8 @@
 
-import asyncWrap from 'express-async-wrapper';
-import {
-  decodeSession,
-} from '../lib/applicants';
-import Applicant from '../models/applicant';
+const { decodeSession } = require('../lib/applicants');
+const Applicant = require('../models/applicant');
 
-export const fetchApplicantSession = config => asyncWrap(async (res, req, next) => {
+exports.fetchApplicantSession = config => async (res, req, next) => {
   let authorizationHeader = res.headers.authorization;
   if (!authorizationHeader) return next();
   authorizationHeader = authorizationHeader.split(' ');
@@ -16,9 +13,9 @@ export const fetchApplicantSession = config => asyncWrap(async (res, req, next) 
     res.applicant = rawApplicant;
   }
   return next();
-});
+};
 
-export const requireApplicant = () => asyncWrap(async (res, req, next) => {
+exports.requireApplicant = () => async (res, req, next) => {
   if (!res.applicant) { throw new Error('Could not authenticate applicant'); }
   return next();
-});
+};

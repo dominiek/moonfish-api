@@ -1,6 +1,6 @@
 
-import { setupMongooseDb, teardownMongooseDb } from '../../lib/testUtils';
-import User from '../user';
+const { setupMongooseDb, teardownMongooseDb } = require('../../lib/testUtils');
+const User = require('../user');
 
 beforeAll(async () => {
   await setupMongooseDb();

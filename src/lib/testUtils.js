@@ -1,21 +1,19 @@
-/* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
+const mongoose = require('mongoose');
+const { signup, encodeSession } = require('./users');
 
-import mongoose from 'mongoose';
-import { signup, encodeSession } from './users';
-
-export const setupMongooseDb = () => new Promise((resolve) => {
-  mongoose.connect('mongodb://localhost/skeleton_test', { useMongoClient: true });
+exports.setupMongooseDb = () => new Promise((resolve) => {
+  mongoose.connect('mongodb://localhost/skeleton_test');
   mongoose.connection.once('open', () => {
     resolve();
   });
 });
 
-export const teardownMongooseDb = () => new Promise((resolve) => {
+exports.teardownMongooseDb = () => new Promise((resolve) => {
   mongoose.connection.close();
   resolve();
 });
 
-export const createTestUserWithSession = async (jwtSecret, id, role = 'user') => {
+exports.createTestUserWithSession = async (jwtSecret, id, role = 'user') => {
   const user = await signup({
     username: id,
     email: `${id}@me.com`,
@@ -24,7 +22,7 @@ export const createTestUserWithSession = async (jwtSecret, id, role = 'user') =>
   });
   user.role = role;
   await user.save();
-  return [user, encodeSession(jwtSecret, user._id)];
+  return [user, encodeSession(jwtSecret, user._id)]; // eslint-disable-line
 };
 
-export const generateSessionHeader = token => ['Authorization', `Bearer ${token}`];
+exports.generateSessionHeader = token => ['Authorization', `Bearer ${token}`];
