@@ -1,8 +1,7 @@
-
-import nodeEnvConfiguration from 'node-env-configuration';
-import { signup } from './users';
-import configDefaults from '../../config/defaults.json';
-import User from '../models/user';
+const nodeEnvConfiguration = require('node-env-configuration');
+const { signup } = require('./users');
+const configDefaults = require('../../config/defaults.json');
+const User = require('../models/user');
 
 const config = nodeEnvConfiguration({
   defaults: configDefaults,
@@ -22,6 +21,6 @@ const createUsers = async () => {
   return true;
 };
 
-export default async () => {
+module.exports = async () => {
   await createUsers();
 };

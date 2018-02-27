@@ -1,8 +1,9 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
 
-import { Router } from 'express';
-import asyncWrap from 'express-async-wrapper';
-import {
+const { Router } = require('express');
+const asyncRouter = require('../lib/asyncRouter');
+
+const {
   apply,
   register,
   participate,
@@ -10,36 +11,38 @@ import {
   isValidMagicToken,
   encodeSession,
   getApplicantByMagicToken,
-} from '../lib/applicants';
-import {
-  calculateTokensaleStatus,
-} from '../lib/status';
-import {
-  fetchApplicantSession,
-} from '../middleware/applicants';
+} = require('../lib/applicants');
 
-export default ({ config }) => {
-  const api = Router();
+const {
+  calculateTokensaleStatus,
+} = require('../lib/status');
+
+const {
+  fetchApplicantSession,
+} = require('../middleware/applicants');
+
+module.exports = ({ config }) => {
+  const api = asyncRouter(Router());
 
   api.use(fetchApplicantSession(config));
 
   // Apply to become a participant
-  api.post('/apply', asyncWrap(async (req, res) => {
+  api.post('/apply', async (req, res) => {
     const tokensaleStatus = await calculateTokensaleStatus(config.tokensale);
     const rawApplicant = await apply(config, tokensaleStatus, req.body);
     const applicant = exportSafeApplicant(rawApplicant);
     res.json({ result: applicant });
-  }));
+  });
 
   // Create session with magic token
-  api.post('/sessions', asyncWrap(async (req, res) => {
+  api.post('/sessions', async (req, res) => {
     const validMagicToken = await isValidMagicToken(req.body.magicToken);
     if (!validMagicToken) throw new Error('Invalid magic token');
     const rawApplicant = await getApplicantByMagicToken(req.body.magicToken);
     const token = encodeSession(config.jwt.secret, req.body.magicToken);
     const applicant = exportSafeApplicant(rawApplicant);
     res.json({ result: { token, applicant } });
-  }));
+  });
 
   // Get session
   api.get('/sessions', (req, res) => {
@@ -48,22 +51,22 @@ export default ({ config }) => {
   });
 
   // Finalize registration for applicant
-  api.post('/register', asyncWrap(async (req, res) => {
+  api.post('/register', async (req, res) => {
     if (!req.applicant) throw new Error('Authentication required');
     const tokensaleStatus = await calculateTokensaleStatus(config.tokensale);
     const rawApplicant = await register(tokensaleStatus, req.applicant.magicToken, req.body);
     const applicant = exportSafeApplicant(rawApplicant);
     res.json({ result: applicant });
-  }));
+  });
 
   // Participate in token sale
-  api.post('/participate', asyncWrap(async (req, res) => {
+  api.post('/participate', async (req, res) => {
     if (!req.applicant) throw new Error('Authentication required');
     const tokensaleStatus = await calculateTokensaleStatus(config.tokensale);
     const rawApplicant = await participate(tokensaleStatus, req.applicant.magicToken, req.body);
     const applicant = exportSafeApplicant(rawApplicant);
     res.json({ result: applicant });
-  }));
+  });
 
 
   return api;

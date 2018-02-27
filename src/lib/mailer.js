@@ -1,7 +1,6 @@
+const postmark = require('postmark');
 
-import postmark from 'postmark';
-
-export const sendMail = (config, { to, subject, body }) => {
+exports.sendMail = (config, { to, subject, body }) => {
   if (process.env.MOCK_EMAIL) {
     console.log(`Sending email to ${to}`);
     console.log(`Subject: ${subject}`);

@@ -1,5 +1,5 @@
 
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
   email: { type: String, required: true, min: 3 },
@@ -12,4 +12,4 @@ const schema = new mongoose.Schema({
   resetPasswordToken: { type: String },
 });
 
-export default mongoose.models.User || mongoose.model('User', schema);
+module.exports = mongoose.models.User || mongoose.model('User', schema);

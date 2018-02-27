@@ -1,6 +1,5 @@
-
-import nodeEnvConfiguration from 'node-env-configuration';
-import configDefaults from '../config/defaults.json';
+const nodeEnvConfiguration = require('node-env-configuration');
+const configDefaults = require('../config/defaults.json');
 
 const ensureNoDefaults = (config) => {
   Object.keys(config).forEach((key) => {
@@ -24,4 +23,4 @@ if (process.env.NODE_ENV !== 'dev' && process.env.NODE_ENV !== 'test') {
   ensureNoDefaults(config);
 }
 
-export default config;
+module.exports = config;

@@ -1,14 +1,15 @@
 
-import http from 'http';
-import express from 'express';
-import cors from 'cors';
-import morgan from 'morgan';
-import bodyParser from 'body-parser';
-import initializeDb from './db';
-import middleware from './middleware';
-import api from './api';
-import setupFixtures from './lib/setupFixtures';
-import config from './config';
+const http = require('http');
+const express = require('express');
+const cors = require('cors');
+const morgan = require('morgan');
+const bodyParser = require('body-parser');
+const initializeDb = require('./db');
+const middleware = require('./middleware');
+const api = require('./api');
+const setupFixtures = require('./lib/setupFixtures');
+const config = require('./config');
+
 
 const app = express();
 app.server = http.createServer(app);
@@ -50,9 +51,9 @@ const bindApp = async (appToBind) => {
   });
 };
 
-export {
-  app,
+module.exports = {
   initApp,
+  app,
   bindApp,
   jsonErrorHandler,
 };

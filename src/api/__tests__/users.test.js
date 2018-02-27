@@ -1,16 +1,16 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
 
-import request from 'supertest';
-import controller from '../users';
-import User from '../../models/user';
+const request = require('supertest');
+const controller = require('../users');
+const User = require('../../models/user');
 
-import { app, jsonErrorHandler } from '../../../src';
-import {
+const { app, jsonErrorHandler } = require('../../../src');
+const {
   setupMongooseDb,
   teardownMongooseDb,
   createTestUserWithSession,
   generateSessionHeader,
-} from '../../lib/testUtils';
+} = require('../../lib/testUtils');
 
 const JWT_SECRET = 'testo';
 
@@ -54,6 +54,7 @@ describe('Users', () => {
       .post('/sessions')
       .send({ email: signupParams.email, password: 'wrong' });
     ({ result, error } = response.body);
+
     expect(error.message).toBe('Incorrect email or password');
 
     response = await request(app)

@@ -4,43 +4,38 @@
   "description": "Open Software for Token Distribution",
   "main": "dist",
   "license": "MIT",
+  "engines": {
+    "node": ">=9.6.1"
+  },
+  "pre-commit": [
+    "lint"
+  ],
   "scripts": {
-    "dev": "nodemon -w src --exec \"MOCK_EMAIL=true NODE_ENV=dev babel-node src/run.js\"",
-    "build": "babel src -s -D -d dist",
-    "prod": "node dist/run.js",
-    "start": "node dist/run.js",
-    "prestart": "yarn run -s build",
+    "dev": "nodemon -w src --exec \"MOCK_EMAIL=true NODE_ENV=dev node src/run.js\"",
+    "start": "NODE_ENV=prod node src/run",
     "lint": "eslint src",
-    "test": "jest -i src"
+    "test": "jest -i src",
+    "test:watch": "jest --watch -i src"
   },
   "dependencies": {
-    "babel-core": "^6.9.0",
-    "babel-polyfill": "^6.26.0",
     "bcrypt": "^1.0.3",
-    "body-parser": "^1.13.3",
-    "compression": "^1.5.2",
-    "cors": "^2.7.1",
-    "express": "^4.13.3",
-    "express-async-wrapper": "^0.1.0",
-    "jsonwebtoken": "^8.1.0",
-    "mongoose": "^4.13.3",
-    "morgan": "^1.8.0",
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "express": "^4.16.2",
+    "jsonwebtoken": "^8.1.1",
+    "mongoose": "^5.0.7",
+    "morgan": "^1.9.0",
     "node-env-configuration": "^1.0.3",
-    "postmark": "^1.5.0",
-    "resource-router-middleware": "^0.6.0"
+    "postmark": "^1.5.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.9.0",
-    "babel-jest": "^21.2.0",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-es2015": "^6.9.0",
-    "babel-preset-stage-0": "^6.5.0",
-    "eslint": "^4.11.0",
+    "eslint": "^4.18.1",
     "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.8.0",
-    "eslint-plugin-jest": "^21.3.2",
-    "jest": "^21.2.1",
-    "nodemon": "^1.9.2",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-jest": "^21.12.2",
+    "jest": "^22.4.2",
+    "nodemon": "^1.15.1",
+    "pre-commit": "^1.2.2",
     "supertest": "^3.0.0"
   },
   "jest": {

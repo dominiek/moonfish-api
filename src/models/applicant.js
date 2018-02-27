@@ -1,5 +1,5 @@
 
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
   email: { type: String, required: true, min: 3 },
@@ -15,4 +15,4 @@ const schema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-export default mongoose.models.Applicant || mongoose.model('Applicant', schema);
+module.exports = mongoose.models.Applicant || mongoose.model('Applicant', schema);

@@ -1,16 +1,12 @@
-
-import { randomBytes, createHash } from 'crypto';
-import jwt from 'jsonwebtoken';
-import Applicant from '../models/applicant';
-import { sendMail } from './mailer';
-
-require('babel-core/register');
-require('babel-polyfill');
+const { randomBytes, createHash } = require('crypto');
+const jwt = require('jsonwebtoken');
+const Applicant = require('../models/applicant');
+const { sendMail } = require('./mailer');
 
 const JWT_EXPIRY = '2h';
 const MAGIC_TOKEN_EXPIRY_SECONDS = 3600;
 
-export const apply = async (config, tokensaleStatus, {
+exports.apply = async (config, tokensaleStatus, {
   email,
 }) => {
   if (!tokensaleStatus.acceptApplicants) {
@@ -50,7 +46,7 @@ The ${config.app.name} Team`,
   return applicant;
 };
 
-export const exportSafeApplicant = (applicant) => {
+exports.exportSafeApplicant = (applicant) => {
   const object = applicant.toObject();
   const {
     email,
@@ -74,14 +70,14 @@ export const exportSafeApplicant = (applicant) => {
   };
 };
 
-export const getApplicantByMagicToken = magicToken => Applicant.findOne({ magicToken });
+exports.getApplicantByMagicToken = magicToken => Applicant.findOne({ magicToken });
 
-export const isValidMagicToken = async (magicToken) => {
-  const applicant = await getApplicantByMagicToken(magicToken);
+exports.isValidMagicToken = async (magicToken) => {
+  const applicant = await exports.getApplicantByMagicToken(magicToken);
   return !!applicant;
 };
 
-export const isExpiredMagicToken = (magicTokenGeneratedAt, setNow = null) => {
+exports.isExpiredMagicToken = (magicTokenGeneratedAt, setNow = null) => {
   const now = setNow || Date.now();
   if ((Date.parse(magicTokenGeneratedAt) + (MAGIC_TOKEN_EXPIRY_SECONDS * 1000)) < now) {
     return true;
@@ -89,16 +85,16 @@ export const isExpiredMagicToken = (magicTokenGeneratedAt, setNow = null) => {
   return false;
 };
 
-export const encodeSession = (jwtSecret, magicToken, expiresIn) =>
+exports.encodeSession = (jwtSecret, magicToken, expiresIn) =>
   jwt.sign({ magicToken }, jwtSecret, { expiresIn: (expiresIn || JWT_EXPIRY) });
 
-export const decodeSession = (jwtSecret, token) => {
+exports.decodeSession = (jwtSecret, token) => {
   const payload = jwt.verify(token, jwtSecret);
   if (!payload || !payload.magicToken) throw new Error('Invalid Token');
   return payload.magicToken;
 };
 
-export const register = async (tokensaleStatus, magicToken, {
+exports.register = async (tokensaleStatus, magicToken, {
   firstName,
   lastName,
   ethAmount,
@@ -115,7 +111,7 @@ export const register = async (tokensaleStatus, magicToken, {
   if (!applicant) {
     throw new Error('No applicant found with that magic token');
   }
-  if (isExpiredMagicToken(applicant.magicTokenGeneratedAt)) {
+  if (exports.isExpiredMagicToken(applicant.magicTokenGeneratedAt)) {
     throw new Error('Magic token is expired');
   }
   if (applicant.completedRegistration) {
@@ -148,7 +144,7 @@ export const register = async (tokensaleStatus, magicToken, {
   return applicant;
 };
 
-export const participate = async (tokensaleStatus, magicToken, {
+exports.participate = async (tokensaleStatus, magicToken, {
   ethAddress,
 }) => {
   if (!tokensaleStatus.acceptParticipation) {
@@ -162,7 +158,7 @@ export const participate = async (tokensaleStatus, magicToken, {
   if (!applicant) {
     throw new Error('No applicant found with that magic token');
   }
-  if (isExpiredMagicToken(applicant.magicTokenGeneratedAt)) {
+  if (exports.isExpiredMagicToken(applicant.magicTokenGeneratedAt)) {
     throw new Error('Magic token is expired');
   }
   if (!applicant.completedRegistration) {

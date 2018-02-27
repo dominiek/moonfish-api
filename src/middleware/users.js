@@ -1,9 +1,7 @@
+const { decodeSession } = require('../lib/users');
+const User = require('../models/user');
 
-import asyncWrap from 'express-async-wrapper';
-import { decodeSession } from '../lib/users';
-import User from '../models/user';
-
-export const fetchSession = config => asyncWrap(async (res, req, next) => {
+exports.fetchSession = config => async (res, req, next) => {
   let authorizationHeader = res.headers.authorization;
   if (!authorizationHeader) return next();
   authorizationHeader = authorizationHeader.split(' ');
@@ -13,10 +11,10 @@ export const fetchSession = config => asyncWrap(async (res, req, next) => {
     res.user = await User.findById(userId);
   }
   return next();
-});
+};
 
-export const requireUser = (role = null) => asyncWrap(async (res, req, next) => {
+exports.requireUser = (role = null) => async (res, req, next) => {
   if (!res.user) { throw new Error('Could not authenticate user'); }
   if (role && res.user.role !== role) { throw new Error('Could not authenticate user (invalid permissions)'); }
   return next();
-});
+};

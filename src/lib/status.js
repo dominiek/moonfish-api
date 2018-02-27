@@ -1,8 +1,8 @@
 
 
-import Applicant from '../models/applicant';
+const Applicant = require('../models/applicant');
 
-export const calculateTokensaleStatus = async (config, setNowTs = null) => {
+exports.calculateTokensaleStatus = async (config, setNowTs = null) => {
   // Determine if token sale is active
   const startTimeTs = Date.parse(config.startTime);
   const endTimeTs = Date.parse(config.endTime);

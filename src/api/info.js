@@ -1,14 +1,16 @@
 
-import asyncWrap from 'express-async-wrapper';
-import { Router } from 'express';
-import {
+
+const { Router } = require('express');
+const asyncRouter = require('../lib/asyncRouter');
+
+const {
   calculateTokensaleStatus,
-} from '../lib/status';
+} = require('../lib/status');
 
-export default ({ config }) => {
-  const api = Router();
+module.exports = ({ config }) => {
+  const api = asyncRouter(Router());
 
-  api.get('/', asyncWrap(async (req, res) => {
+  api.get('/', async (req, res) => {
     const details = {
       startTime: config.tokensale.startTime,
       startTimeTs: Date.parse(config.tokensale.startTime),
@@ -18,7 +20,7 @@ export default ({ config }) => {
     };
     const status = await calculateTokensaleStatus(config.tokensale);
     res.json({ result: { details, status } });
-  }));
+  });
 
   return api;
 };

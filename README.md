@@ -1,5 +1,6 @@
 
 [![Build Status](https://img.shields.io/travis/rekallai/moonfish-api.svg?branch=master&style=flat-square)](https://travis-ci.org/rekallai/moonfish-api)
+[![Dependencies Status](https://david-dm.org/rekallai/moonfish-api/status.svg)](https://david-dm.org/rekallai/moonfish-api)
 
 _Disclaimer: This is experimental work in progress. Do not use this in any production ICOs yet._
 
@@ -130,11 +131,11 @@ docker build -t ico-template-auction-api .
 - [x] Unit test for JWT expiry
 - [x] Make sure application errors in prod when defaults are not changed
 - [x] Allow oversubscribing (optionally)
+- [x] Use native Node instead of babel
 - [x] Set limits to the amount of ether that's whitelisted
 - [x] Setup CI
 - [ ] Setup coveralls code coverage reporting
 - [ ] HTML email templates
-- [ ] Use native Node instead of babel
 - [ ] Improve documentation
 - [ ] Add license information
 - [ ] Add disclaimers

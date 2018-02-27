@@ -1,7 +1,7 @@
 
-import { setupMongooseDb, teardownMongooseDb } from '../../lib/testUtils';
-import User from '../../models/user';
-import {
+const { setupMongooseDb, teardownMongooseDb } = require('../../lib/testUtils');
+const User = require('../../models/user');
+const {
   signup,
   authenticate,
   encodeSession,
@@ -9,7 +9,7 @@ import {
   hasRole,
   requireRole,
   exportSafeUser,
-} from '../users';
+} = require('../users');
 
 beforeAll(async () => {
   await setupMongooseDb();

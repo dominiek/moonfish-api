@@ -1,19 +1,18 @@
-/* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
+const request = require('supertest');
+const controller = require('../applicants');
+const Applicant = require('../../models/applicant');
 
-import request from 'supertest';
-import controller from '../applicants';
-import Applicant from '../../models/applicant';
-
-import { app, jsonErrorHandler } from '../../../src';
-import {
+const { app, jsonErrorHandler } = require('../../../src');
+const {
   setupMongooseDb,
   teardownMongooseDb,
   generateSessionHeader,
-} from '../../lib/testUtils';
-import {
+} = require('../../lib/testUtils');
+
+const {
   apply,
   register,
-} from '../../lib/applicants';
+} = require('../../lib/applicants');
 
 const JWT_SECRET = 'testo1';
 const config = {
@@ -102,8 +101,9 @@ describe('Applicants', () => {
 
     response = await request(app)
       .post('/register')
-      .set(...generateSessionHeader(`${token}aa`));
+      .set(...generateSessionHeader(`${token}_badtoken`));
     ({ result, error } = response.body);
+
     expect(error.message).toBe('invalid signature');
 
     response = await request(app)
