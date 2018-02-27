@@ -131,11 +131,11 @@ docker build -t ico-template-auction-api .
 - [x] Unit test for JWT expiry
 - [x] Make sure application errors in prod when defaults are not changed
 - [x] Allow oversubscribing (optionally)
+- [x] Use native Node instead of babel
 - [x] Set limits to the amount of ether that's whitelisted
 - [x] Setup CI
 - [ ] Setup coveralls code coverage reporting
 - [ ] HTML email templates
-- [ ] Use native Node instead of babel
 - [ ] Improve documentation
 - [ ] Add license information
 - [ ] Add disclaimers
