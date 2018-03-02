@@ -1,8 +1,11 @@
 const { randomBytes, createHash } = require('crypto');
 const jwt = require('jsonwebtoken');
+const Mnemonic = require('bitcore-mnemonic');
+
 const config = require('../config');
 const Applicant = require('../models/applicant');
 const { sendWelcome } = require('./emails');
+
 
 const JWT_EXPIRY = '2h';
 const MAGIC_TOKEN_EXPIRY_SECONDS = 3600;
@@ -32,10 +35,11 @@ exports.apply = async (tokensaleStatus, {
   }
   applicant.magicToken = magicToken;
   applicant.magicTokenGeneratedAt = Date.now();
-
+  const mnemonic = new Mnemonic();
+  applicant.mnemonicPhrase = mnemonic.toString().split(' ').slice(0, 2).join(' ');
   await applicant.save();
-  await sendWelcome(email, magicToken);
 
+  await sendWelcome(email, applicant.toObject());
   return applicant;
 };
 

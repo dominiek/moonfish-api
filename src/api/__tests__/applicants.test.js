@@ -63,6 +63,7 @@ describe('Applicants', () => {
     expect(error).toBe(undefined);
     expect(result.email).toBe(params.email);
     expect(!!result.magicToken).toBe(false);
+    expect(!!result.mnemonicPhrase).toBe(true);
 
     const applicant = await Applicant.findOne({ email: 'john@galt.com' });
     expect(!!applicant).toBe(true);
@@ -140,6 +141,7 @@ describe('Applicants', () => {
     expect(result.completedRegistration).toBe(true);
     expect(result.firstName).toBe('John');
     expect(result.lastName).toBe('Galt');
+    expect(!!result.mnemonicPhrase).toBe(false);
     expect(result.ethAmount).toBe(3.0);
   });
 
@@ -200,5 +202,6 @@ describe('Applicants', () => {
     expect(result.lastName).toBe('Galt');
     expect(result.ethAmount).toBe(3.0);
     expect(result.ethAddress).toBe('0x00');
+    expect(!!result.mnemonicPhrase).toBe(false);
   });
 });

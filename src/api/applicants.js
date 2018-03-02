@@ -22,7 +22,9 @@ api.use(fetchSession);
 api.post('/apply', async (req, res) => {
   const tokenSaleStatus = await calculateStatus();
   const rawApplicant = await apply(tokenSaleStatus, req.body);
+  const { mnemonicPhrase } = rawApplicant;
   const applicant = exportSafeApplicant(rawApplicant);
+  applicant.mnemonicPhrase = mnemonicPhrase;
   res.json({ result: applicant });
 });
 

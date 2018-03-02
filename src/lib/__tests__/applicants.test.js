@@ -47,6 +47,7 @@ describe('Applicants', () => {
     expect(!!applicant.magicTokenGeneratedAt).toBe(true);
     expect(applicant.isParticipating).toBe(false);
     expect(applicant.completedRegistration).toBe(false);
+    expect(applicant.mnemonicPhrase.split(' ').length).toBe(2);
   });
 
   test('It should be able to encode and decode a session', () => {

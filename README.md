@@ -26,6 +26,7 @@ Moonfish is an open source platform for doing Token Sales and Initial Coin Offer
 * Uses temporary "magic tokens" to authenticate. Tokens are generated with a 512 random byte seed and SHA512
 * Admin passwords are stored using BCRYPT
 * Email verification using Postmark (DKIM and SPF)
+* Unique mnemonic phrase to combat phishing (Using [Bitcore BIP39 standard](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki))
 * Full unit test coverage of business logic and APIs
 * AirBnB ES lint standard enforced
 * CI integration of unit tests and linting
@@ -134,12 +135,12 @@ docker build -t ico-template-auction-api .
 - [x] Use native Node instead of babel
 - [x] Set limits to the amount of ether that's whitelisted
 - [x] Setup CI
+- [x] Add unique communication keyphrase for each user
 - [ ] Setup coveralls code coverage reporting
 - [ ] HTML email templates
 - [ ] Improve documentation
 - [ ] Add license information
 - [ ] Add disclaimers
-- [ ] Add unique communication keyphrase for each user
 - [ ] Add improved CORS security
 - [ ] Add improved encryption of applicant data
 - [ ] Add settings admin API
