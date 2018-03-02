@@ -1,10 +1,8 @@
 const { initialize: initializeEmails } = require('../../lib/emails');
 
-
 jest.mock('../mailer');
 
-const { sendMail } = require('../mailer');
-
+// const { sendMail } = require('../mailer');
 
 const { sendWelcome } = require('../emails');
 
