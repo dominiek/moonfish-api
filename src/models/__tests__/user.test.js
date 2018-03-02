@@ -1,13 +1,13 @@
 
-const { setupMongooseDb, teardownMongooseDb } = require('../../lib/testUtils');
+const { setupDatabase, teardownDatabase } = require('../../lib/test-utils');
 const User = require('../user');
 
 beforeAll(async () => {
-  await setupMongooseDb();
+  await setupDatabase();
   await User.remove();
 });
 
-afterAll(teardownMongooseDb);
+afterAll(teardownDatabase);
 
 describe('User', () => {
   test('It should be able to CRUD a user', async () => {

@@ -1,38 +1,41 @@
 const request = require('supertest');
+
+const config = require('../../config');
+
+config.setTestConfig({
+  tokenSale: {
+    maxWhitelistedApplicants: 20,
+    startTime: (new Date(Date.now() - (24 * 3600 * 1000))).toUTCString(),
+    endTime: (new Date(Date.now() + (24 * 3600 * 1000))).toUTCString(),
+    allowOversubscribedApplications: true,
+    maxCumulativeEthAmount: false,
+  }
+});
+
 const controller = require('../applicants');
 const Applicant = require('../../models/applicant');
+const errorHandler = require('../../middlewares/error-handler');
+const { initialize: initializeEmails } = require('../../lib/emails');
 
-const { app, jsonErrorHandler } = require('../../../src');
+const app = require('../../../src/server');
+
 const {
-  setupMongooseDb,
-  teardownMongooseDb,
+  setupDatabase,
+  teardownDatabase,
   generateSessionHeader,
-} = require('../../lib/testUtils');
+} = require('../../lib/test-utils');
 
 const {
   apply,
   register,
 } = require('../../lib/applicants');
 
-const JWT_SECRET = 'testo1';
-const config = {
-  tokensale: {
-    maxWhitelistedApplicants: 20,
-    startTime: (new Date(Date.now() - (24 * 3600 * 1000))).toUTCString(),
-    endTime: (new Date(Date.now() + (24 * 3600 * 1000))).toUTCString(),
-  },
-  jwt: {
-    secret: JWT_SECRET,
-  },
-  app: { name: 'ICO Template', domain: 'ico.template' },
-  postmark: { apikey: '123' },
-};
-
 beforeAll(async () => {
-  app.use('/', controller({ config }));
-  app.use(jsonErrorHandler);
+  app.use('/', controller);
+  app.use(errorHandler);
 
-  await setupMongooseDb();
+  await initializeEmails();
+  await setupDatabase();
   await Applicant.remove();
 });
 
@@ -40,7 +43,7 @@ beforeEach(async () => {
   await Applicant.remove();
 });
 
-afterAll(teardownMongooseDb);
+afterAll(teardownDatabase);
 
 describe('Applicants', () => {
   test('It should allow us to apply to token sale', async () => {
@@ -54,24 +57,31 @@ describe('Applicants', () => {
     response = await request(app)
       .post('/apply')
       .send(params);
+
     ({ result, error } = response.body);
+
     expect(error).toBe(undefined);
     expect(result.email).toBe(params.email);
     expect(!!result.magicToken).toBe(false);
     expect(!!result.mnemonicPhrase).toBe(true);
+
     const applicant = await Applicant.findOne({ email: 'john@galt.com' });
     expect(!!applicant).toBe(true);
 
     response = await request(app)
       .post('/sessions')
       .send({ magicToken: 'wrong' });
+
     ({ result, error } = response.body);
+
     expect(error.message).toBe('Invalid magic token');
 
     response = await request(app)
       .post('/sessions')
       .send({ magicToken: applicant.magicToken });
+
     ({ result, error } = response.body);
+
     expect(error).toBe(undefined);
     const { token } = result;
     expect(!!token).toBe(true);
@@ -79,22 +89,26 @@ describe('Applicants', () => {
     response = await request(app)
       .get('/sessions')
       .set(...generateSessionHeader(token));
+
     ({ result, error } = response.body);
+
     expect(error).toBe(undefined);
     expect(result.email).toBe(params.email);
     expect(!!result.magicToken).toBe(false);
   });
+
   test('It should allow us to finalize registration', async () => {
     let response;
     let result;
     let error;
 
     const email = 'john@galt.com';
-    const applicant = await apply(config, { acceptApplicants: true }, { email });
+    const applicant = await apply({ acceptApplicants: true }, { email });
 
     response = await request(app)
       .post('/sessions')
       .send({ magicToken: applicant.magicToken });
+
     ({ result, error } = response.body);
     expect(error).toBe(undefined);
     const { token } = result;
@@ -130,13 +144,15 @@ describe('Applicants', () => {
     expect(!!result.mnemonicPhrase).toBe(false);
     expect(result.ethAmount).toBe(3.0);
   });
+
   test('It should allow us to participate', async () => {
     let response;
     let result;
     let error;
 
     const email = 'john@galt.com';
-    const applicant = await apply(config, { acceptApplicants: true }, { email });
+    const applicant = await apply({ acceptApplicants: true }, { email });
+
     await register({ acceptApplicants: true }, applicant.magicToken, {
       email,
       firstName: 'John',
@@ -147,7 +163,9 @@ describe('Applicants', () => {
     response = await request(app)
       .post('/sessions')
       .send({ magicToken: applicant.magicToken });
+
     ({ result, error } = response.body);
+
     expect(error).toBe(undefined);
     const { token } = result;
     expect(!!token).toBe(true);
@@ -155,13 +173,16 @@ describe('Applicants', () => {
     response = await request(app)
       .post('/participate')
       .send({ });
+
     ({ result, error } = response.body);
+
     expect(error.message).toBe('Authentication required');
 
     response = await request(app)
       .post('/participate')
       .set(...generateSessionHeader(token));
     ({ result, error } = response.body);
+
     expect(error.message).toBe('Need a valid ethAddress');
 
     response = await request(app)
@@ -171,7 +192,9 @@ describe('Applicants', () => {
         ethAddress: '0x00',
       })
       .set(...generateSessionHeader(token));
+
     ({ result, error } = response.body);
+
     expect(error).toBe(undefined);
     expect(result.email).toBe(email);
     expect(result.completedRegistration).toBe(true);

@@ -1,24 +1,19 @@
 
 const request = require('supertest');
-const { app } = require('../../../src');
-const api = require('../info');
+const app = require('../../../src/server');
+const controller = require('../info');
+const config = require('../../config');
+
 const {
-  setupMongooseDb,
-  teardownMongooseDb,
-} = require('../../lib/testUtils');
+  setupDatabase,
+  teardownDatabase,
+} = require('../../lib/test-utils');
+
 const Applicant = require('../../models/applicant');
 
-const config = {
-  tokensale: {
-    maxWhitelistedApplicants: 20,
-    startTime: (new Date(Date.now() - (24 * 3600 * 1000))).toUTCString(),
-    endTime: (new Date(Date.now() + (24 * 3600 * 1000))).toUTCString(),
-  },
-};
-
 beforeAll(async () => {
-  app.use('/', api({ config }));
-  await setupMongooseDb();
+  app.use('/', controller);
+  await setupDatabase();
   await Applicant.remove();
 });
 
@@ -26,7 +21,7 @@ beforeEach(async () => {
   await Applicant.remove();
 });
 
-afterAll(teardownMongooseDb);
+afterAll(teardownDatabase);
 
 describe('Test the info API', () => {
   test('It should have valid tokensale info', async () => {
@@ -34,7 +29,7 @@ describe('Test the info API', () => {
     expect(response.statusCode).toBe(200);
     const { details, status } = response.body.result;
     expect(details.maxWhitelistedApplicants).toBe(20);
-    expect(details.startTimeTs).toBe(Date.parse(config.tokensale.startTime));
+    expect(details.startTimeTs).toBe(Date.parse(config.get('tokenSale.startTime')));
     expect(status.acceptApplicants).toBe(true);
   });
 });

@@ -1,19 +1,19 @@
 const mongoose = require('mongoose');
 const { signup, encodeSession } = require('./users');
 
-exports.setupMongooseDb = () => new Promise((resolve) => {
+exports.setupDatabase = () => new Promise((resolve) => {
   mongoose.connect('mongodb://localhost/skeleton_test');
   mongoose.connection.once('open', () => {
     resolve();
   });
 });
 
-exports.teardownMongooseDb = () => new Promise((resolve) => {
+exports.teardownDatabase = () => new Promise((resolve) => {
   mongoose.connection.close();
   resolve();
 });
 
-exports.createTestUserWithSession = async (jwtSecret, id, role = 'user') => {
+exports.createTestUserWithSession = async (id, role = 'user') => {
   const user = await signup({
     username: id,
     email: `${id}@me.com`,
@@ -22,7 +22,11 @@ exports.createTestUserWithSession = async (jwtSecret, id, role = 'user') => {
   });
   user.role = role;
   await user.save();
-  return [user, encodeSession(jwtSecret, user._id)]; // eslint-disable-line
+
+  return {
+    user,
+    token: encodeSession(user._id)
+  };
 };
 
 exports.generateSessionHeader = token => ['Authorization', `Bearer ${token}`];

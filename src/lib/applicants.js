@@ -1,13 +1,18 @@
 const { randomBytes, createHash } = require('crypto');
 const jwt = require('jsonwebtoken');
-const Applicant = require('../models/applicant');
-const { sendMail } = require('./mailer');
 const Mnemonic = require('bitcore-mnemonic');
+
+const config = require('../config');
+const Applicant = require('../models/applicant');
+const { sendWelcome } = require('./emails');
+
 
 const JWT_EXPIRY = '2h';
 const MAGIC_TOKEN_EXPIRY_SECONDS = 3600;
 
-exports.apply = async (config, tokensaleStatus, {
+const jwtSecret = config.get('jwt.secret');
+
+exports.apply = async (tokensaleStatus, {
   email,
 }) => {
   if (!tokensaleStatus.acceptApplicants) {
@@ -34,22 +39,7 @@ exports.apply = async (config, tokensaleStatus, {
   applicant.mnemonicPhrase = mnemonic.toString().split(' ').slice(0, 2).join(' ');
   await applicant.save();
 
-  sendMail(config, {
-    to: email,
-    subject: `Welcome to ${config.app.name} Registration`,
-    body: `
-
-Your unique key phrase is: ${applicant.mnemonicPhrase}
-
-To proceed with your registration, use the following link:
-
-
-https://${config.app.domain}/register?magicToken=${magicToken}
-
-Best,
-The ${config.app.name} Team`,
-  });
-
+  await sendWelcome(email, applicant.toObject());
   return applicant;
 };
 
@@ -80,7 +70,7 @@ exports.exportSafeApplicant = (applicant) => {
 exports.getApplicantByMagicToken = magicToken => Applicant.findOne({ magicToken });
 
 exports.isValidMagicToken = async (magicToken) => {
-  const applicant = await exports.getApplicantByMagicToken(magicToken);
+  const applicant = await Applicant.findOne({ magicToken });
   return !!applicant;
 };
 
@@ -92,10 +82,10 @@ exports.isExpiredMagicToken = (magicTokenGeneratedAt, setNow = null) => {
   return false;
 };
 
-exports.encodeSession = (jwtSecret, magicToken, expiresIn) =>
+exports.encodeSession = (magicToken, expiresIn) =>
   jwt.sign({ magicToken }, jwtSecret, { expiresIn: (expiresIn || JWT_EXPIRY) });
 
-exports.decodeSession = (jwtSecret, token) => {
+exports.decodeSession = (token) => {
   const payload = jwt.verify(token, jwtSecret);
   if (!payload || !payload.magicToken) throw new Error('Invalid Token');
   return payload.magicToken;

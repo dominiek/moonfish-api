@@ -4,22 +4,24 @@
     "host": "0.0.0.0"
   },
   "mongo": {
-    "uri": "mongodb://localhost/moonfish_dev"
+    "uri": "mongodb://localhost/moonfish_dev",
+    "options": {}
   },
   "admin": {
     "username": "admin",
     "email": "admin@moonfish.one",
-    "password": "changeme"
+    "password": "[change me]"
   },
   "jwt": {
-    "secret": "changeme",
-    "adminsecret": "changeme"
+    "secret": "[change me]",
+    "adminSecret": "[change me]"
   },
-  "tokensale": {
+  "tokenSale": {
     "maxWhitelistedApplicants": 20,
     "startTime": "Tue, 22 Mar 2018 00:00:00 GMT",
     "endTime": "Tue, 22 Apr 2018 00:00:00 GMT",
-    "allowOversubscribedApplications": true
+    "allowOversubscribedApplications": true,
+    "maxCumulativeEthAmount": false
   },
   "app": {
     "name": "Moonfish",
@@ -27,6 +29,6 @@
   },
   "postmark": {
     "from": "no-reply@localhost",
-    "apikey": "changeme"
+    "apikey": "[change me]"
   }
 }

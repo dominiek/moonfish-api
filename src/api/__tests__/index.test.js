@@ -1,9 +1,9 @@
 
 const request = require('supertest');
-const { app } = require('../../../src');
+const app = require('../../../src/server');
 const api = require('../index');
 
-app.use('/', api({}));
+app.use('/', api);
 
 describe('Test the root path', () => {
   test('It should have a valid index response', async () => {
