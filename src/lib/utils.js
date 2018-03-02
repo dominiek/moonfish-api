@@ -1,5 +1,5 @@
-exports.get = (obj, path, def) => {
-  const fullPath = path
+exports.get = (obj, path, fallback) => {
+  const fullPath = Array.isArray(path) ? path : path
     .replace(/\[/g, '.')
     .replace(/]/g, '')
     .split('.')
@@ -10,14 +10,14 @@ exports.get = (obj, path, def) => {
   return fullPath.every((step) => {
     if (step) tmp = tmp[step];
     return tmp !== undefined;
-  }) ? tmp : def;
+  }) ? tmp : fallback;
 };
 
 function templateGet(p, obj) {
   return p.split('.').reduce((res, key) => {
     const r = res[key];
     if (typeof r === 'undefined') {
-      throw Error(`template: was not provider a value for attribute $${key}`);
+      throw Error(`template: was not provided a value for attribute $${key}`);
     }
     return r;
   }, obj);

@@ -1,2 +1,5 @@
-adsfafdadf
-dfadfadf
+Your unique key phrase is: ${mnemonicPhrase}
+To proceed with your registration, use the following link:
+https://${domain}/register?magicToken=${magicToken}
+Best,
+The ${appName} Team`,

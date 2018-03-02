@@ -8,7 +8,10 @@ const { promisify } = require('util');
 const templatesDist = path.join(__dirname, '../../emails/dist');
 const templates = {};
 
-const appName = config.get('app.name');
+const defaultOptions = {
+  appName: config.get('app.name'),
+  domain: config.get('app.domain')
+};
 
 const readdir = promisify(fs.readdir);
 const readFile = promisify(fs.readFile);
@@ -28,11 +31,17 @@ function template(templateName, map) {
   return templateFn(templateStr, map);
 }
 
-exports.sendWelcome = (email, magicToken) => {
+exports.sendWelcome = (email, { magicToken, mnemonicPhrase }) => {
+  const options = {
+    ...defaultOptions,
+    magicToken,
+    mnemonicPhrase,
+  };
+
   sendMail({
     to: email,
-    subject: `Welcome to ${appName} Registration`,
-    html: template('welcome.html', { magicToken }),
-    text: template('welcome.text', { magicToken })
+    subject: `Welcome to ${defaultOptions.appName} Registration`,
+    html: template('welcome.html', options),
+    text: template('welcome.text', options)
   });
 };
