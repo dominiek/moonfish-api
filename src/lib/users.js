@@ -3,8 +3,11 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { createHash } = require('crypto');
 const User = require('../models/user');
+const config = require('../config');
 
 const BCRYPT_SALT_ROUNDS = 10;
+
+const jwtSecret = config.get('jwt.adminSecret');
 
 exports.signup = async ({
   username,
@@ -60,9 +63,9 @@ exports.exportSafeUser = (user) => {
   return object;
 };
 
-exports.encodeSession = (jwtSecret, userId) => jwt.sign({ userId }, jwtSecret);
+exports.encodeSession = (userId) => jwt.sign({ userId }, jwtSecret);
 
-exports.decodeSession = (jwtSecret, token) => {
+exports.decodeSession = (token) => {
   const payload = jwt.verify(token, jwtSecret);
   if (!payload || !payload.userId) throw new Error('Invalid Token');
   return payload.userId;

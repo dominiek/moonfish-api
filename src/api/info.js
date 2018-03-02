@@ -1,26 +1,28 @@
 
 
 const { Router } = require('express');
-const asyncRouter = require('../lib/asyncRouter');
+const config = require('../config');
+const asyncRouter = require('../lib/async-router');
+const { calculateStatus } = require('../lib/sale-status');
 
-const {
-  calculateTokensaleStatus,
-} = require('../lib/status');
+const api = asyncRouter(Router());
 
-module.exports = ({ config }) => {
-  const api = asyncRouter(Router());
+const tokenSale = config.get('tokenSale');
 
-  api.get('/', async (req, res) => {
-    const details = {
-      startTime: config.tokensale.startTime,
-      startTimeTs: Date.parse(config.tokensale.startTime),
-      endTime: config.tokensale.endTime,
-      endTimeTs: Date.parse(config.tokensale.endTime),
-      maxWhitelistedApplicants: config.tokensale.maxWhitelistedApplicants,
-    };
-    const status = await calculateTokensaleStatus(config.tokensale);
-    res.json({ result: { details, status } });
+api.get('/', async (req, res) => {
+  res.json({
+    result: {
+      details: {
+        startTime: tokenSale.startTime,
+        startTimeTs: Date.parse(tokenSale.startTime),
+        endTime: tokenSale.endTime,
+        endTimeTs: Date.parse(tokenSale.endTime),
+        maxWhitelistedApplicants: tokenSale.maxWhitelistedApplicants,
+      },
+      status: await calculateStatus()
+    }
   });
+});
 
-  return api;
-};
+module.exports = api;
+

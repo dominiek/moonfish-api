@@ -100,9 +100,9 @@ All values in `config/defaults.json` can be overwritten using environment variab
 - `API_BIND_PORT` - Port to bind to, defaults to `3005`
 - `API_MONGO_URI` - MongoDB URI to connect to, defaults to `mongodb://localhost/skeleton_dev`
 - `API_ADMIN_EMAIL` - Default root admin user `admin@moonfish.one`
-- `API_ADMIN_PASSWORD` - Default root admin password `changeme`
-- `API_JWT_SECRET` - Secret key for generating JWT tokens `changeme`
-- `API_JWT_ADMINSECRET` - Secret key for generating admin JWT tokens `changeme`
+- `API_ADMIN_PASSWORD` - Default root admin password `[change me]`
+- `API_JWT_SECRET` - Secret key for generating JWT tokens `[change me]`
+- `API_JWT_ADMINSECRET` - Secret key for generating admin JWT tokens `[change me]`
 - `API_APP_NAME` - Application name `Moonfish`
 - `API_APP_DOMAIN` - Domain of token sale web interface `localhost`
 - `API_POSTMARK_APIKEY` - Postmark API key - used for email communication

@@ -1,20 +1,23 @@
 
-
+const config = require('../config');
 const Applicant = require('../models/applicant');
 
-exports.calculateTokensaleStatus = async (config, setNowTs = null) => {
+exports.calculateStatus = async (nowTs = Date.now(), {
+  startTime = config.get('tokenSale.startTime'),
+  endTime = config.get('tokenSale.endTime'),
+  maxWhitelistedApplicants = config.get('tokenSale.maxWhitelistedApplicants'),
+  maxCumulativeEthAmount = config.get('tokenSale.maxCumulativeEthAmount'),
+  allowOversubscribedApplications = config.get('tokenSale.allowOversubscribedApplications')
+} = {}) => {
   // Determine if token sale is active
-  const startTimeTs = Date.parse(config.startTime);
-  const endTimeTs = Date.parse(config.endTime);
-  let nowTs = Date.now();
-  if (setNowTs) nowTs = setNowTs;
-  const isActive = (nowTs > startTimeTs) && (nowTs < endTimeTs);
+  const isActive = (nowTs > Date.parse(startTime)) && (nowTs < Date.parse((endTime)));
 
   // Check if token sale is oversubscribed
   const numWhitelisted = await Applicant.count({ completedRegistration: true });
-  const isOverSubscribedByNumPeople = (numWhitelisted >= config.maxWhitelistedApplicants);
-  const { maxCumulativeEthAmount } = config;
+  const isOverSubscribedByNumPeople = (numWhitelisted >= maxWhitelistedApplicants);
+
   let isOverSubscribedByEthAmount = false;
+
   if (maxCumulativeEthAmount) {
     const aggregation = await Applicant.aggregate([
       {
@@ -26,14 +29,15 @@ exports.calculateTokensaleStatus = async (config, setNowTs = null) => {
         },
       },
     ]);
-    if (aggregation[0].totalEthAmount > maxCumulativeEthAmount) {
+
+    if (aggregation.length && aggregation[0].totalEthAmount > maxCumulativeEthAmount) {
       isOverSubscribedByEthAmount = true;
     }
   }
   const isOverSubscribed = isOverSubscribedByNumPeople || isOverSubscribedByEthAmount;
 
   // Determine whether we accept applicants and participation
-  const acceptApplicants = !isOverSubscribed || config.allowOversubscribedApplications;
+  const acceptApplicants = !isOverSubscribed || allowOversubscribedApplications;
   const acceptParticipation = isActive;
 
   return {

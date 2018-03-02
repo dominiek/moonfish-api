@@ -1,15 +1,13 @@
 const { decodeSession } = require('../lib/users');
 const User = require('../models/user');
 
-exports.fetchSession = config => async (res, req, next) => {
+exports.fetchSession = async (res, req, next) => {
   let authorizationHeader = res.headers.authorization;
   if (!authorizationHeader) return next();
   authorizationHeader = authorizationHeader.split(' ');
   if (authorizationHeader.length !== 2) throw new Error('Invalid Authorization Token');
-  const userId = decodeSession(config.jwt.adminSecret, authorizationHeader[1]);
-  if (userId) {
-    res.user = await User.findById(userId);
-  }
+  const userId = decodeSession(authorizationHeader[1]);
+  if (userId) res.user = await User.findById(userId);
   return next();
 };
 

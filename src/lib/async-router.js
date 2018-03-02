@@ -55,7 +55,6 @@ const asyncRouter = (router) => {
     } else {
       useOriginal.call(router, ...patched);
     }
-
     return this;
   };
 

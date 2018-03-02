@@ -3,22 +3,20 @@
 const request = require('supertest');
 const controller = require('../users');
 const User = require('../../models/user');
+const errorHandler = require('../../middlewares/error-handler');
 
-const { app, jsonErrorHandler } = require('../../../src');
+const app = require('../../../src/server');
 const {
-  setupMongooseDb,
-  teardownMongooseDb,
+  setupDatabase,
+  teardownDatabase,
   createTestUserWithSession,
   generateSessionHeader,
-} = require('../../lib/testUtils');
-
-const JWT_SECRET = 'testo';
+} = require('../../lib/test-utils');
 
 beforeAll(async () => {
-  app.use('/', controller({ config: { jwt: { adminSecret: JWT_SECRET } } }));
-  app.use(jsonErrorHandler);
-
-  await setupMongooseDb();
+  app.use('/', controller);
+  app.use(errorHandler);
+  await setupDatabase();
   await User.remove();
 });
 
@@ -26,7 +24,7 @@ beforeEach(async () => {
   await User.remove();
 });
 
-afterAll(teardownMongooseDb);
+afterAll(teardownDatabase);
 
 describe('Users', () => {
   test('It should be able to register and authenticate a user', async () => {
@@ -41,10 +39,13 @@ describe('Users', () => {
       passwordRepeat: 'hello',
       name: 'John Galt',
     };
+
     response = await request(app)
       .post('/')
       .send(signupParams);
+
     ({ result, error } = response.body);
+
     expect(error).toBe(undefined);
     expect(result.name).toBe(signupParams.name);
     expect(!!result.hash).toBe(false);
@@ -53,6 +54,7 @@ describe('Users', () => {
     response = await request(app)
       .post('/sessions')
       .send({ email: signupParams.email, password: 'wrong' });
+
     ({ result, error } = response.body);
 
     expect(error.message).toBe('Incorrect email or password');
@@ -60,7 +62,9 @@ describe('Users', () => {
     response = await request(app)
       .post('/sessions')
       .send(signupParams);
+
     ({ result, error } = response.body);
+
     expect(error).toBe(undefined);
     expect(!!result.user.hash).toBe(false);
     const { token } = result;
@@ -68,26 +72,29 @@ describe('Users', () => {
     response = await request(app)
       .get('/self')
       .set(...generateSessionHeader(token));
+
     ({ result, error } = response.body);
+
     expect(error).toBe(undefined);
     expect(result.name).toBe(signupParams.name);
     expect(!!result.hash).toBe(false);
   });
 
   test('It should be update my account', async () => {
-    const [, token] = await createTestUserWithSession(JWT_SECRET, 'john');
-
+    const { token } = await createTestUserWithSession('john');
     const response = await request(app)
       .post('/self')
       .send({ name: 'John Galt' })
       .set(...generateSessionHeader(token));
+
     const { error } = response.body;
+
     expect(error).toBe(undefined);
     expect((await User.findOne({ username: 'john' })).name).toBe('John Galt');
   });
 
   test('It should be delete my account', async () => {
-    const [, token] = await createTestUserWithSession(JWT_SECRET, 'john');
+    const { token } = await createTestUserWithSession('john');
 
     const response = await request(app)
       .delete('/self')
@@ -98,31 +105,31 @@ describe('Users', () => {
   });
 
   test('It should be able to get a user for admin', async () => {
-    const [adminUser, adminToken] = await createTestUserWithSession(JWT_SECRET, 'dominiek', 'admin');
+    const { user, token } = await createTestUserWithSession('dominiek', 'admin');
     const response = await request(app)
-      .get(`/${adminUser._id}`)
-      .set(...generateSessionHeader(adminToken));
+      .get(`/${user._id}`)
+      .set(...generateSessionHeader(token));
     const { result, error } = response.body;
     expect(error).toBe(undefined);
     expect(result.role).toBe('admin');
   });
 
   test('It should be able to get a delete user for admin (404)', async () => {
-    await createTestUserWithSession(JWT_SECRET, 'john');
-    const [, adminToken] = await createTestUserWithSession(JWT_SECRET, 'dominiek', 'admin');
+    await createTestUserWithSession('john');
+    const { token } = await createTestUserWithSession('dominiek', 'admin');
     const response = await request(app)
       .delete('/5a0e88cd0f94c22aae7f6f7c')
-      .set(...generateSessionHeader(adminToken));
+      .set(...generateSessionHeader(token));
     const { error } = response.body;
     expect(error.message).toBe('No such user');
   });
 
   test('It should be able to get a delete user for admin', async () => {
-    const [user] = await createTestUserWithSession(JWT_SECRET, 'john');
-    const [, adminToken] = await createTestUserWithSession(JWT_SECRET, 'dominiek', 'admin');
+    const { user } = await createTestUserWithSession('john');
+    const { token } = await createTestUserWithSession('dominiek', 'admin');
     const response = await request(app)
       .delete(`/${user._id}`)
-      .set(...generateSessionHeader(adminToken));
+      .set(...generateSessionHeader(token));
     const { result, error } = response.body;
     expect(error).toBe(undefined);
     expect(result.success).toBe(true);
@@ -130,12 +137,12 @@ describe('Users', () => {
   });
 
   test('It should be able to get a delete user for admin', async () => {
-    const [user] = await createTestUserWithSession(JWT_SECRET, 'john');
-    const [, adminToken] = await createTestUserWithSession(JWT_SECRET, 'dominiek', 'admin');
+    const { user } = await createTestUserWithSession('john');
+    const { token } = await createTestUserWithSession('dominiek', 'admin');
     const response = await request(app)
       .post(`/${user._id}`)
       .send({ name: 'John Galt' })
-      .set(...generateSessionHeader(adminToken));
+      .set(...generateSessionHeader(token));
     const { error } = response.body;
     expect(error).toBe(undefined);
 

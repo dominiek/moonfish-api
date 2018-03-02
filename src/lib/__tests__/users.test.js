@@ -1,5 +1,5 @@
 
-const { setupMongooseDb, teardownMongooseDb } = require('../../lib/testUtils');
+const { setupDatabase, teardownDatabase } = require('../../lib/test-utils');
 const User = require('../../models/user');
 const {
   signup,
@@ -12,14 +12,14 @@ const {
 } = require('../users');
 
 beforeAll(async () => {
-  await setupMongooseDb();
+  await setupDatabase();
 });
 
 beforeEach(async () => {
   await User.remove();
 });
 
-afterAll(teardownMongooseDb);
+afterAll(teardownDatabase);
 
 describe('Users', () => {
   test('It should be able to sign up a user with validation', async () => {
@@ -105,11 +105,10 @@ describe('Users', () => {
   test('It should be able to encode and decode a session', () => {
     const userId = 999;
     const badToken = 'bla';
-    const goodToken = encodeSession('bla', userId);
+    const goodToken = encodeSession(userId);
     expect(goodToken.length).toBe(123);
-    expect(decodeSession('bla', goodToken)).toBe(userId);
-    expect(() => decodeSession('bla', badToken)).toThrow('jwt malformed');
-    expect(() => decodeSession('bad', goodToken)).toThrow('invalid signature');
+    expect(decodeSession(goodToken)).toBe(userId);
+    expect(() => decodeSession(badToken)).toThrow('jwt malformed');
   });
 
   test('It should convert a user to a safe user object without password hash', async () => {
