@@ -2,6 +2,7 @@ const { randomBytes, createHash } = require('crypto');
 const jwt = require('jsonwebtoken');
 const Applicant = require('../models/applicant');
 const { sendMail } = require('./mailer');
+const Mnemonic = require('bitcore-mnemonic');
 
 const JWT_EXPIRY = '2h';
 const MAGIC_TOKEN_EXPIRY_SECONDS = 3600;
@@ -29,13 +30,19 @@ exports.apply = async (config, tokensaleStatus, {
   }
   applicant.magicToken = magicToken;
   applicant.magicTokenGeneratedAt = Date.now();
+  const mnemonic = new Mnemonic();
+  applicant.mnemonicPhrase = mnemonic.toString().split(' ').slice(0, 2).join(' ');
   await applicant.save();
 
   sendMail(config, {
     to: email,
     subject: `Welcome to ${config.app.name} Registration`,
     body: `
+
+Your unique key phrase is: ${applicant.mnemonicPhrase}
+
 To proceed with your registration, use the following link:
+
 
 https://${config.app.domain}/register?magicToken=${magicToken}
 

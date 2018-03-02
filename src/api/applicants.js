@@ -30,7 +30,9 @@ module.exports = ({ config }) => {
   api.post('/apply', async (req, res) => {
     const tokensaleStatus = await calculateTokensaleStatus(config.tokensale);
     const rawApplicant = await apply(config, tokensaleStatus, req.body);
+    const { mnemonicPhrase } = rawApplicant;
     const applicant = exportSafeApplicant(rawApplicant);
+    applicant.mnemonicPhrase = mnemonicPhrase;
     res.json({ result: applicant });
   });
 

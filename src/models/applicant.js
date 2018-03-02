@@ -7,6 +7,7 @@ const schema = new mongoose.Schema({
   magicTokenGeneratedAt: { type: Date, default: Date.now },
   completedRegistration: { type: Boolean, default: false, required: true },
   isParticipating: { type: Boolean, default: false, required: true },
+  mnemonicPhrase: { type: String },
   ethAddress: { type: String, min: 10 },
   ethAmount: { type: Number },
   firstName: { type: String, min: 1 },
