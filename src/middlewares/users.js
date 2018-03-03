@@ -1,18 +1,20 @@
 const { decodeSession } = require('../lib/users');
 const User = require('../models/user');
 
-exports.fetchSession = async (res, req, next) => {
-  let authorizationHeader = res.headers.authorization;
+
+exports.fetchSession = async (ctx, next) => {
+  const authorizationHeader = ctx.headers.authorization;
   if (!authorizationHeader) return next();
-  authorizationHeader = authorizationHeader.split(' ');
-  if (authorizationHeader.length !== 2) throw new Error('Invalid Authorization Token');
-  const userId = decodeSession(authorizationHeader[1]);
-  if (userId) res.user = await User.findById(userId);
+  const authorizationHeaders = authorizationHeader.split(' ');
+  if (authorizationHeaders.length !== 2) throw new Error('Invalid Authorization Token');
+  const userId = decodeSession(authorizationHeaders[1]);
+  if (userId) ctx.state.user = await User.findById(userId);
   return next();
 };
 
-exports.requireUser = (role = null) => async (res, req, next) => {
-  if (!res.user) { throw new Error('Could not authenticate user'); }
-  if (role && res.user.role !== role) { throw new Error('Could not authenticate user (invalid permissions)'); }
+exports.requireUser = (role = null) => async (ctx, next) => {
+  const { user } = ctx.state;
+  if (!user) throw new Error('Could not authenticate user');
+  if (role && user.role !== role) throw new Error('Could not authenticate user (invalid permissions)');
   return next();
 };

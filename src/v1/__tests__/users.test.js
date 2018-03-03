@@ -1,21 +1,19 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
 
-const request = require('supertest');
-const controller = require('../users');
+const router = require('../users');
 const User = require('../../models/user');
-const errorHandler = require('../../middlewares/error-handler');
 
-const app = require('../../../src/server');
+const app = require('../../../src/app');
 const {
   setupDatabase,
   teardownDatabase,
   createTestUserWithSession,
   generateSessionHeader,
+  request
 } = require('../../lib/test-utils');
 
 beforeAll(async () => {
-  app.use('/', controller);
-  app.use(errorHandler);
+  app.use(router.routes());
   await setupDatabase();
   await User.remove();
 });

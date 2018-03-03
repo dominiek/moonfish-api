@@ -1,9 +1,13 @@
+const {
+  request
+} = require('../../lib/test-utils');
+const app = require('../../app');
 
-const request = require('supertest');
-const app = require('../../../src/server');
-const api = require('../index');
+const router = require('../index');
 
-app.use('/', api);
+beforeAll(async () => {
+  app.use(router.routes());
+});
 
 describe('Test the root path', () => {
   test('It should have a valid index response', async () => {

@@ -1,5 +1,10 @@
+const request = require('supertest'); //eslint-disable-line
 const mongoose = require('mongoose');
 const { signup, encodeSession } = require('./users');
+
+exports.request = (app) => {
+  return request(app.listen());
+};
 
 exports.setupDatabase = () => new Promise((resolve) => {
   mongoose.connect('mongodb://localhost/skeleton_test');

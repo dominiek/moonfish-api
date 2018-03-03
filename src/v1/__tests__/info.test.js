@@ -1,18 +1,17 @@
-
-const request = require('supertest');
-const app = require('../../../src/server');
-const controller = require('../info');
+const app = require('../../../src/app');
+const router = require('../info');
 const config = require('../../config');
 
 const {
   setupDatabase,
   teardownDatabase,
+  request
 } = require('../../lib/test-utils');
 
 const Applicant = require('../../models/applicant');
 
 beforeAll(async () => {
-  app.use('/', controller);
+  app.use(router.routes());
   await setupDatabase();
   await Applicant.remove();
 });

@@ -2,11 +2,9 @@ const database = require('./database');
 const setupFixtures = require('../scripts/setup-fixtures');
 
 const { initialize: initializeEmails } = require('./lib/emails');
-const server = require('./server');
+const app = require('./app');
 const config = require('./config');
-const api = require('./api');
-
-const errorHandler = require('./middlewares/error-handler');
+const v1 = require('./v1');
 
 const PORT = config.get('bind.port');
 const HOST = config.get('bind.host');
@@ -16,10 +14,9 @@ const HOST = config.get('bind.host');
   await initializeEmails();
   await setupFixtures();
 
-  server.use('/', api);
-  server.use(errorHandler);
+  app.use('/1', v1.routes());
 
-  server.listen(PORT, HOST, () => {
+  app.listen(PORT, HOST, () => {
     console.log(`Started on port //${HOST}:${PORT}`);
   });
 })();
