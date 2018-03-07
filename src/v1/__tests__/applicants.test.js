@@ -44,7 +44,7 @@ afterAll(teardownDatabase);
 describe('Applicants', () => {
   test('It should allow us to apply to token sale', async () => {
     let response;
-    let result;
+    let data;
     let error;
 
     const params = {
@@ -54,12 +54,12 @@ describe('Applicants', () => {
       .post('/apply')
       .send(params);
 
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
 
     expect(error).toBe(undefined);
-    expect(result.email).toBe(params.email);
-    expect(!!result.magicToken).toBe(false);
-    expect(!!result.mnemonicPhrase).toBe(true);
+    expect(data.email).toBe(params.email);
+    expect(!!data.magicToken).toBe(false);
+    expect(!!data.mnemonicPhrase).toBe(true);
 
     const applicant = await Applicant.findOne({ email: 'john@galt.com' });
     expect(!!applicant).toBe(true);
@@ -68,7 +68,7 @@ describe('Applicants', () => {
       .post('/sessions')
       .send({ magicToken: 'wrong' });
 
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
 
     expect(error.message).toBe('Invalid magic token');
 
@@ -76,26 +76,26 @@ describe('Applicants', () => {
       .post('/sessions')
       .send({ magicToken: applicant.magicToken });
 
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
 
     expect(error).toBe(undefined);
-    const { token } = result;
+    const { token } = data;
     expect(!!token).toBe(true);
 
     response = await request(app)
       .get('/sessions')
       .set(...generateSessionHeader(token));
 
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
 
     expect(error).toBe(undefined);
-    expect(result.email).toBe(params.email);
-    expect(!!result.magicToken).toBe(false);
+    expect(data.email).toBe(params.email);
+    expect(!!data.magicToken).toBe(false);
   });
 
   test('It should allow us to finalize registration', async () => {
     let response;
-    let result;
+    let data;
     let error;
 
     const email = 'john@galt.com';
@@ -105,22 +105,22 @@ describe('Applicants', () => {
       .post('/sessions')
       .send({ magicToken: applicant.magicToken });
 
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
     expect(error).toBe(undefined);
-    const { token } = result;
+    const { token } = data;
     expect(!!token).toBe(true);
 
     response = await request(app)
       .post('/register')
       .set(...generateSessionHeader(`${token}_badtoken`));
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
 
     expect(error.message).toBe('invalid signature');
 
     response = await request(app)
       .post('/register')
       .set(...generateSessionHeader(token));
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
     expect(error.message).toBe('Need a valid firstName');
 
     response = await request(app)
@@ -131,19 +131,19 @@ describe('Applicants', () => {
         ethAmount: 3.0,
       })
       .set(...generateSessionHeader(token));
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
     expect(error).toBe(undefined);
-    expect(result.email).toBe(email);
-    expect(result.completedRegistration).toBe(true);
-    expect(result.firstName).toBe('John');
-    expect(result.lastName).toBe('Galt');
-    expect(!!result.mnemonicPhrase).toBe(false);
-    expect(result.ethAmount).toBe(3.0);
+    expect(data.email).toBe(email);
+    expect(data.completedRegistration).toBe(true);
+    expect(data.firstName).toBe('John');
+    expect(data.lastName).toBe('Galt');
+    expect(!!data.mnemonicPhrase).toBe(false);
+    expect(data.ethAmount).toBe(3.0);
   });
 
   test('It should allow us to participate', async () => {
     let response;
-    let result;
+    let data;
     let error;
 
     const email = 'john@galt.com';
@@ -160,24 +160,24 @@ describe('Applicants', () => {
       .post('/sessions')
       .send({ magicToken: applicant.magicToken });
 
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
 
     expect(error).toBe(undefined);
-    const { token } = result;
+    const { token } = data;
     expect(!!token).toBe(true);
 
     response = await request(app)
       .post('/participate')
       .send({ });
 
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
 
     expect(error.message).toBe('Authentication required');
 
     response = await request(app)
       .post('/participate')
       .set(...generateSessionHeader(token));
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
 
     expect(error.message).toBe('Need a valid ethAddress');
 
@@ -189,15 +189,15 @@ describe('Applicants', () => {
       })
       .set(...generateSessionHeader(token));
 
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
 
     expect(error).toBe(undefined);
-    expect(result.email).toBe(email);
-    expect(result.completedRegistration).toBe(true);
-    expect(result.firstName).toBe('John');
-    expect(result.lastName).toBe('Galt');
-    expect(result.ethAmount).toBe(3.0);
-    expect(result.ethAddress).toBe('0x00');
-    expect(!!result.mnemonicPhrase).toBe(false);
+    expect(data.email).toBe(email);
+    expect(data.completedRegistration).toBe(true);
+    expect(data.firstName).toBe('John');
+    expect(data.lastName).toBe('Galt');
+    expect(data.ethAmount).toBe(3.0);
+    expect(data.ethAddress).toBe('0x00');
+    expect(!!data.mnemonicPhrase).toBe(false);
   });
 });

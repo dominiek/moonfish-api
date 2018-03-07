@@ -22,6 +22,7 @@ exports.apply = async (tokensaleStatus, {
   if (!email || !email.length) {
     throw new Error('Need a valid email address');
   }
+
   const randStr = randomBytes(512).toString('hex');
   const magicToken = createHash('sha512')
     .update(email + randStr, 'utf8')

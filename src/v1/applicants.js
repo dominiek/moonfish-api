@@ -24,7 +24,7 @@ router.post('/apply', async (ctx) => {
   const { mnemonicPhrase } = rawApplicant;
   const applicant = exportSafeApplicant(rawApplicant);
   applicant.mnemonicPhrase = mnemonicPhrase;
-  ctx.body = { result: applicant };
+  ctx.body = { data: applicant };
 });
 
 // Create session with magic token
@@ -35,13 +35,13 @@ router.post('/sessions', async (ctx) => {
   const rawApplicant = await getApplicantByMagicToken(magicToken);
   const token = encodeSession(magicToken);
   const applicant = exportSafeApplicant(rawApplicant);
-  ctx.body = { result: { token, applicant } };
+  ctx.body = { data: { token, applicant } };
 });
 
 // Get session
 router.get('/sessions', (ctx) => {
   if (!ctx.state.applicant) throw new Error('Authentication required');
-  ctx.body = { result: exportSafeApplicant(ctx.state.applicant) };
+  ctx.body = { data: exportSafeApplicant(ctx.state.applicant) };
 });
 
 // Finalize registration for applicant
@@ -50,7 +50,7 @@ router.post('/register', async (ctx) => {
   if (!applicant) throw new Error('Authentication required');
   const tokensaleStatus = await calculateStatus();
   const rawApplicant = await register(tokensaleStatus, applicant.magicToken, ctx.request.body);
-  ctx.body = { result: exportSafeApplicant(rawApplicant) };
+  ctx.body = { data: exportSafeApplicant(rawApplicant) };
 });
 
 // Participate in token sale
@@ -59,7 +59,7 @@ router.post('/participate', async (ctx) => {
   if (!applicant) throw new Error('Authentication required');
   const tokensaleStatus = await calculateStatus();
   const rawApplicant = await participate(tokensaleStatus, applicant.magicToken, ctx.request.body);
-  ctx.body = { result: exportSafeApplicant(rawApplicant) };
+  ctx.body = { data: exportSafeApplicant(rawApplicant) };
 });
 
 module.exports = router;

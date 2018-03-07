@@ -26,7 +26,7 @@ describe('Test the info API', () => {
   test('It should have valid tokensale info', async () => {
     const response = await request(app).get('/');
     expect(response.statusCode).toBe(200);
-    const { details, status } = response.body.result;
+    const { details, status } = response.body.data;
     expect(details.maxWhitelistedApplicants).toBe(20);
     expect(details.startTimeTs).toBe(Date.parse(config.get('tokenSale.startTime')));
     expect(status.acceptApplicants).toBe(true);

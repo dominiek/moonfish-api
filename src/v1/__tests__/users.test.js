@@ -27,7 +27,7 @@ afterAll(teardownDatabase);
 describe('Users', () => {
   test('It should be able to register and authenticate a user', async () => {
     let response;
-    let result;
+    let data;
     let error;
 
     const signupParams = {
@@ -42,18 +42,18 @@ describe('Users', () => {
       .post('/')
       .send(signupParams);
 
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
 
     expect(error).toBe(undefined);
-    expect(result.name).toBe(signupParams.name);
-    expect(!!result.hash).toBe(false);
+    expect(data.name).toBe(signupParams.name);
+    expect(!!data.password).toBe(false);
     expect(!!await User.findOne({ username: 'john' })).toBe(true);
 
     response = await request(app)
       .post('/sessions')
       .send({ email: signupParams.email, password: 'wrong' });
 
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
 
     expect(error.message).toBe('Incorrect email or password');
 
@@ -61,21 +61,21 @@ describe('Users', () => {
       .post('/sessions')
       .send(signupParams);
 
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
 
     expect(error).toBe(undefined);
-    expect(!!result.user.hash).toBe(false);
-    const { token } = result;
+    expect(!!data.user.password).toBe(false);
+    const { token } = data;
 
     response = await request(app)
       .get('/self')
       .set(...generateSessionHeader(token));
 
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
 
     expect(error).toBe(undefined);
-    expect(result.name).toBe(signupParams.name);
-    expect(!!result.hash).toBe(false);
+    expect(data.name).toBe(signupParams.name);
+    expect(!!data.password).toBe(false);
   });
 
   test('It should be update my account', async () => {
@@ -107,9 +107,9 @@ describe('Users', () => {
     const response = await request(app)
       .get(`/${user._id}`)
       .set(...generateSessionHeader(token));
-    const { result, error } = response.body;
+    const { data, error } = response.body;
     expect(error).toBe(undefined);
-    expect(result.role).toBe('admin');
+    expect(data.role).toBe('admin');
   });
 
   test('It should be able to get a delete user for admin (404)', async () => {
@@ -128,9 +128,9 @@ describe('Users', () => {
     const response = await request(app)
       .delete(`/${user._id}`)
       .set(...generateSessionHeader(token));
-    const { result, error } = response.body;
+    const { data, error } = response.body;
     expect(error).toBe(undefined);
-    expect(result.success).toBe(true);
+    expect(data.success).toBe(true);
     expect(await User.count()).toBe(1);
   });
 

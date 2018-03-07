@@ -12,8 +12,7 @@ router.use('/applicants', applicants.routes());
 router.use('/info', info.routes());
 
 router.get('/', (ctx) => {
-  const protocolVersion = 1;
-  ctx.body = { version, protocolVersion };
+  ctx.body = { version };
 });
 
 module.exports = router;
