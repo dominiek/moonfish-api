@@ -11,7 +11,6 @@ const {
 const Applicant = require('../../models/applicant');
 
 beforeAll(async () => {
-  app.use(router.routes());
   await setupDatabase();
   await Applicant.remove();
 });
@@ -24,7 +23,7 @@ afterAll(teardownDatabase);
 
 describe('Test the info API', () => {
   test('It should have valid tokensale info', async () => {
-    const response = await request(app).get('/');
+    const response = await request(app).get('/1/info');
     expect(response.statusCode).toBe(200);
     const { details, status } = response.body.data;
     expect(details.maxWhitelistedApplicants).toBe(20);

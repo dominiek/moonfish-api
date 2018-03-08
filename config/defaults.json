@@ -1,6 +1,7 @@
 {
   "cors": {
-    "exposeHeaders": ["content-length"]
+    "exposeHeaders": ["content-length"],
+    "maxAge": 600
   },
   "bind": {
     "port": 1306,

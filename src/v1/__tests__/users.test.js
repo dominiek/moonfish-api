@@ -13,7 +13,6 @@ const {
 } = require('../../lib/test-utils');
 
 beforeAll(async () => {
-  app.use(router.routes());
   await setupDatabase();
   await User.remove();
 });
@@ -28,7 +27,6 @@ describe('Users', () => {
   test('It should be able to register and authenticate a user', async () => {
     let response;
     let data;
-    let error;
 
     const signupParams = {
       username: 'john',
@@ -39,41 +37,40 @@ describe('Users', () => {
     };
 
     response = await request(app)
-      .post('/')
+      .post('/1/users')
       .send(signupParams);
 
-    ({ data, error } = response.body);
+    ({ data } = response.body);
 
-    expect(error).toBe(undefined);
+    expect(response.status).toBe(200);
     expect(data.name).toBe(signupParams.name);
     expect(!!data.password).toBe(false);
     expect(!!await User.findOne({ username: 'john' })).toBe(true);
 
     response = await request(app)
-      .post('/sessions')
+      .post('/1/users/sessions')
       .send({ email: signupParams.email, password: 'wrong' });
 
-    ({ data, error } = response.body);
-
-    expect(error.message).toBe('Incorrect email or password');
+    expect(response.status, 401);
+    expect(response.body.error.message).toBe('Incorrect email or password');
 
     response = await request(app)
-      .post('/sessions')
+      .post('/1/users/sessions')
       .send(signupParams);
 
-    ({ data, error } = response.body);
+    ({ data } = response.body);
 
-    expect(error).toBe(undefined);
+    expect(response.status, 200);
     expect(!!data.user.password).toBe(false);
     const { token } = data;
 
     response = await request(app)
-      .get('/self')
+      .get('/1/users/self')
       .set(...generateSessionHeader(token));
 
-    ({ data, error } = response.body);
+    ({ data } = response.body);
 
-    expect(error).toBe(undefined);
+    expect(response.status, 200);
     expect(data.name).toBe(signupParams.name);
     expect(!!data.password).toBe(false);
   });
@@ -81,7 +78,7 @@ describe('Users', () => {
   test('It should be update my account', async () => {
     const { token } = await createTestUserWithSession('john');
     const response = await request(app)
-      .post('/self')
+      .post('/1/users/self')
       .send({ name: 'John Galt' })
       .set(...generateSessionHeader(token));
 
@@ -95,7 +92,7 @@ describe('Users', () => {
     const { token } = await createTestUserWithSession('john');
 
     const response = await request(app)
-      .delete('/self')
+      .delete('/1/users/self')
       .set(...generateSessionHeader(token));
     const { error } = response.body;
     expect(error).toBe(undefined);
@@ -105,7 +102,7 @@ describe('Users', () => {
   test('It should be able to get a user for admin', async () => {
     const { user, token } = await createTestUserWithSession('dominiek', 'admin');
     const response = await request(app)
-      .get(`/${user._id}`)
+      .get(`/1/users/${user._id}`)
       .set(...generateSessionHeader(token));
     const { data, error } = response.body;
     expect(error).toBe(undefined);
@@ -116,7 +113,7 @@ describe('Users', () => {
     await createTestUserWithSession('john');
     const { token } = await createTestUserWithSession('dominiek', 'admin');
     const response = await request(app)
-      .delete('/5a0e88cd0f94c22aae7f6f7c')
+      .delete('/1/users/5a0e88cd0f94c22aae7f6f7c')
       .set(...generateSessionHeader(token));
     const { error } = response.body;
     expect(error.message).toBe('No such user');
@@ -126,7 +123,7 @@ describe('Users', () => {
     const { user } = await createTestUserWithSession('john');
     const { token } = await createTestUserWithSession('dominiek', 'admin');
     const response = await request(app)
-      .delete(`/${user._id}`)
+      .delete(`/1/users/${user._id}`)
       .set(...generateSessionHeader(token));
     const { data, error } = response.body;
     expect(error).toBe(undefined);
@@ -138,7 +135,7 @@ describe('Users', () => {
     const { user } = await createTestUserWithSession('john');
     const { token } = await createTestUserWithSession('dominiek', 'admin');
     const response = await request(app)
-      .post(`/${user._id}`)
+      .post(`/1/users/${user._id}`)
       .send({ name: 'John Galt' })
       .set(...generateSessionHeader(token));
     const { error } = response.body;

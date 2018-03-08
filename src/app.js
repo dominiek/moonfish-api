@@ -13,7 +13,7 @@ const app = new Koa();
 app.use(errorHandler)
   .use(logger())
   .use(cors({
-    exposedHeaders: config.get('cors'),
+    ...config.get('cors'),
   }))
   .use(bodyParser());
 
