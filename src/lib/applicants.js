@@ -6,7 +6,6 @@ const config = require('../config');
 const Applicant = require('../models/applicant');
 const { sendWelcome } = require('./emails');
 
-
 const JWT_EXPIRY = '2h';
 const MAGIC_TOKEN_EXPIRY_SECONDS = 3600;
 
@@ -22,6 +21,7 @@ exports.apply = async (tokensaleStatus, {
   if (!email || !email.length) {
     throw new Error('Need a valid email address');
   }
+
   const randStr = randomBytes(512).toString('hex');
   const magicToken = createHash('sha512')
     .update(email + randStr, 'utf8')
@@ -55,6 +55,7 @@ exports.exportSafeApplicant = (applicant) => {
     ethAmount,
     ethAddress,
   } = object;
+
   return {
     email,
     firstName,

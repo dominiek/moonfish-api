@@ -1,4 +1,3 @@
-
 const { setupDatabase, teardownDatabase } = require('../../lib/test-utils');
 const User = require('../../models/user');
 const {
@@ -50,7 +49,7 @@ describe('Users', () => {
       email: 'info@dominiek.com',
     });
     expect(!user.password);
-    expect(user.hash.length).toBe(60);
+    expect(user.password.length).toBe(60);
 
     await signup({
       password: 'hello',
@@ -118,7 +117,7 @@ describe('Users', () => {
       username: 'dominiek',
       email: 'info@dominiek.com',
     });
-    expect(user.hash.length).toBe(60);
-    expect(!!exportSafeUser(user).hash).toBe(false);
+    expect(user.password.length).toBe(60);
+    expect(!!exportSafeUser(user).password).toBe(false);
   });
 });

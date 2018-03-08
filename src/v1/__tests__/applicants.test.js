@@ -11,7 +11,6 @@ config.setTestConfig({
 });
 
 const app = require('../../../src/app');
-const router = require('../applicants');
 const Applicant = require('../../models/applicant');
 const { initialize: initializeEmails } = require('../../lib/emails');
 
@@ -28,8 +27,6 @@ const {
 } = require('../../lib/applicants');
 
 beforeAll(async () => {
-  app.use(router.routes());
-
   await initializeEmails();
   await setupDatabase();
   await Applicant.remove();
@@ -44,7 +41,7 @@ afterAll(teardownDatabase);
 describe('Applicants', () => {
   test('It should allow us to apply to token sale', async () => {
     let response;
-    let result;
+    let data;
     let error;
 
     const params = {
@@ -52,99 +49,99 @@ describe('Applicants', () => {
     };
 
     response = await request(app)
-      .post('/apply')
+      .post('/1/applicants/apply')
       .send(params);
 
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
 
     expect(error).toBe(undefined);
-    expect(result.email).toBe(params.email);
-    expect(!!result.magicToken).toBe(false);
-    expect(!!result.mnemonicPhrase).toBe(true);
+    expect(data.email).toBe(params.email);
+    expect(!!data.magicToken).toBe(false);
+    expect(!!data.mnemonicPhrase).toBe(true);
 
     const applicant = await Applicant.findOne({ email: 'john@galt.com' });
     expect(!!applicant).toBe(true);
 
     response = await request(app)
-      .post('/sessions')
+      .post('/1/applicants/sessions')
       .send({ magicToken: 'wrong' });
 
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
 
     expect(error.message).toBe('Invalid magic token');
 
     response = await request(app)
-      .post('/sessions')
+      .post('/1/applicants/sessions')
       .send({ magicToken: applicant.magicToken });
 
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
 
     expect(error).toBe(undefined);
-    const { token } = result;
+    const { token } = data;
     expect(!!token).toBe(true);
 
     response = await request(app)
-      .get('/sessions')
+      .get('/1/applicants/sessions')
       .set(...generateSessionHeader(token));
 
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
 
     expect(error).toBe(undefined);
-    expect(result.email).toBe(params.email);
-    expect(!!result.magicToken).toBe(false);
+    expect(data.email).toBe(params.email);
+    expect(!!data.magicToken).toBe(false);
   });
 
   test('It should allow us to finalize registration', async () => {
     let response;
-    let result;
+    let data;
     let error;
 
     const email = 'john@galt.com';
     const applicant = await apply({ acceptApplicants: true }, { email });
 
     response = await request(app)
-      .post('/sessions')
+      .post('/1/applicants/sessions')
       .send({ magicToken: applicant.magicToken });
 
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
     expect(error).toBe(undefined);
-    const { token } = result;
+    const { token } = data;
     expect(!!token).toBe(true);
 
     response = await request(app)
-      .post('/register')
+      .post('/1/applicants/register')
       .set(...generateSessionHeader(`${token}_badtoken`));
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
 
     expect(error.message).toBe('invalid signature');
 
     response = await request(app)
-      .post('/register')
+      .post('/1/applicants/register')
       .set(...generateSessionHeader(token));
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
     expect(error.message).toBe('Need a valid firstName');
 
     response = await request(app)
-      .post('/register')
+      .post('/1/applicants/register')
       .send({
         firstName: 'John',
         lastName: 'Galt',
         ethAmount: 3.0,
       })
       .set(...generateSessionHeader(token));
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
     expect(error).toBe(undefined);
-    expect(result.email).toBe(email);
-    expect(result.completedRegistration).toBe(true);
-    expect(result.firstName).toBe('John');
-    expect(result.lastName).toBe('Galt');
-    expect(!!result.mnemonicPhrase).toBe(false);
-    expect(result.ethAmount).toBe(3.0);
+    expect(data.email).toBe(email);
+    expect(data.completedRegistration).toBe(true);
+    expect(data.firstName).toBe('John');
+    expect(data.lastName).toBe('Galt');
+    expect(!!data.mnemonicPhrase).toBe(false);
+    expect(data.ethAmount).toBe(3.0);
   });
 
   test('It should allow us to participate', async () => {
     let response;
-    let result;
+    let data;
     let error;
 
     const email = 'john@galt.com';
@@ -158,47 +155,47 @@ describe('Applicants', () => {
     });
 
     response = await request(app)
-      .post('/sessions')
+      .post('/1/applicants/sessions')
       .send({ magicToken: applicant.magicToken });
 
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
 
     expect(error).toBe(undefined);
-    const { token } = result;
+    const { token } = data;
     expect(!!token).toBe(true);
 
     response = await request(app)
-      .post('/participate')
+      .post('/1/applicants/participate')
       .send({ });
 
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
 
     expect(error.message).toBe('Authentication required');
 
     response = await request(app)
-      .post('/participate')
+      .post('/1/applicants/participate')
       .set(...generateSessionHeader(token));
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
 
     expect(error.message).toBe('Need a valid ethAddress');
 
     response = await request(app)
-      .post('/participate')
+      .post('/1/applicants/participate')
       .send({
         magicToken: applicant.magicToken,
         ethAddress: '0x00',
       })
       .set(...generateSessionHeader(token));
 
-    ({ result, error } = response.body);
+    ({ data, error } = response.body);
 
     expect(error).toBe(undefined);
-    expect(result.email).toBe(email);
-    expect(result.completedRegistration).toBe(true);
-    expect(result.firstName).toBe('John');
-    expect(result.lastName).toBe('Galt');
-    expect(result.ethAmount).toBe(3.0);
-    expect(result.ethAddress).toBe('0x00');
-    expect(!!result.mnemonicPhrase).toBe(false);
+    expect(data.email).toBe(email);
+    expect(data.completedRegistration).toBe(true);
+    expect(data.firstName).toBe('John');
+    expect(data.lastName).toBe('Galt');
+    expect(data.ethAmount).toBe(3.0);
+    expect(data.ethAddress).toBe('0x00');
+    expect(!!data.mnemonicPhrase).toBe(false);
   });
 });

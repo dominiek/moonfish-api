@@ -10,7 +10,7 @@ const tokenSale = config.get('tokenSale');
 
 router.get('/', async (ctx) => {
   ctx.body = {
-    result: {
+    data: {
       details: {
         startTime: tokenSale.startTime,
         startTimeTs: Date.parse(tokenSale.startTime),

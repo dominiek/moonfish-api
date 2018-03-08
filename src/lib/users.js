@@ -1,7 +1,6 @@
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { createHash } = require('crypto');
 const User = require('../models/user');
 const config = require('../config');
 
@@ -35,7 +34,7 @@ exports.signup = async ({
   if (!password || !password.length) throw new Error('Expected password to not be blank');
   if (password !== passwordRepeat) throw new Error('Expected passwords to match');
   const salt = await bcrypt.genSalt(BCRYPT_SALT_ROUNDS);
-  user.hash = await bcrypt.hash(password, salt);
+  user.password = await bcrypt.hash(password, salt);
   user.role = 'user';
 
   // Save
@@ -48,7 +47,7 @@ exports.authenticate = async (email, password) => {
   if (!password || !password.length) throw new Error('Password cannot be blank');
   const user = await User.findOne({ email });
   if (user) {
-    const comparison = await bcrypt.compare(password, user.hash);
+    const comparison = await bcrypt.compare(password, user.password);
     if (comparison === true) {
       return user;
     }
@@ -58,7 +57,7 @@ exports.authenticate = async (email, password) => {
 
 exports.exportSafeUser = (user) => {
   const object = user.toObject();
-  delete object.hash;
+  delete object.password;
   return object;
 };
 
@@ -76,19 +75,10 @@ exports.requireRole = (user, role) => {
   if (!exports.hasRole(user, role)) throw new Error('Permission denied');
 };
 
-exports.forgotPassword = async (user) => {
-  const hash = createHash('sha256');
-  hash.update(`${user.email}-${user.name}-${Date.now()}`);
-  const resetPasswordToken = hash.digest('hex');
-  user.set({ resetPasswordToken });
-  await user.save();
-  return resetPasswordToken;
-};
-
 exports.setPassword = async (user, newPassword) => {
   const salt = await bcrypt.genSalt(BCRYPT_SALT_ROUNDS);
-  const hash = await bcrypt.hash(newPassword, salt);
-  user.set({ hash });
+  const passsword = await bcrypt.hash(newPassword, salt);
+  user.set({ passsword });
   await user.save();
 };
 
