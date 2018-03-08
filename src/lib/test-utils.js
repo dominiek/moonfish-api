@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const { signup, encodeSession } = require('./users');
 
 exports.request = (app) => {
-  return request(app.listen());
+  return request(app.callback());
 };
 
 exports.setupDatabase = () => new Promise((resolve) => {

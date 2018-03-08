@@ -50,6 +50,7 @@ describe('Applicants', () => {
     const params = {
       email: 'john@galt.com',
     };
+
     response = await request(app)
       .post('/apply')
       .send(params);
