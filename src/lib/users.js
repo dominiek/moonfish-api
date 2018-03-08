@@ -40,7 +40,6 @@ exports.signup = async ({
 
   // Save
   await user.save();
-
   return user;
 };
 

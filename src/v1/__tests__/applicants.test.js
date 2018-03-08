@@ -1,5 +1,3 @@
-const request = require('supertest');
-
 const config = require('../../config');
 
 config.setTestConfig({
@@ -12,17 +10,16 @@ config.setTestConfig({
   }
 });
 
-const controller = require('../applicants');
+const app = require('../../../src/app');
+const router = require('../applicants');
 const Applicant = require('../../models/applicant');
-const errorHandler = require('../../middlewares/error-handler');
 const { initialize: initializeEmails } = require('../../lib/emails');
-
-const app = require('../../../src/server');
 
 const {
   setupDatabase,
   teardownDatabase,
   generateSessionHeader,
+  request
 } = require('../../lib/test-utils');
 
 const {
@@ -31,8 +28,7 @@ const {
 } = require('../../lib/applicants');
 
 beforeAll(async () => {
-  app.use('/', controller);
-  app.use(errorHandler);
+  app.use(router.routes());
 
   await initializeEmails();
   await setupDatabase();
@@ -54,6 +50,7 @@ describe('Applicants', () => {
     const params = {
       email: 'john@galt.com',
     };
+
     response = await request(app)
       .post('/apply')
       .send(params);

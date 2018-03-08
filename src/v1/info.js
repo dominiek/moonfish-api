@@ -1,16 +1,15 @@
 
 
-const { Router } = require('express');
+const Router = require('koa-router');
 const config = require('../config');
-const asyncRouter = require('../lib/async-router');
 const { calculateStatus } = require('../lib/sale-status');
 
-const api = asyncRouter(Router());
+const router = new Router();
 
 const tokenSale = config.get('tokenSale');
 
-api.get('/', async (req, res) => {
-  res.json({
+router.get('/', async (ctx) => {
+  ctx.body = {
     result: {
       details: {
         startTime: tokenSale.startTime,
@@ -21,8 +20,8 @@ api.get('/', async (req, res) => {
       },
       status: await calculateStatus()
     }
-  });
+  };
 });
 
-module.exports = api;
+module.exports = router;
 
