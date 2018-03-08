@@ -51,7 +51,7 @@ describe('Users', () => {
       .post('/1/users/sessions')
       .send({ email: signupParams.email, password: 'wrong' });
 
-    expect(response.status, 401);
+    // expect(response.status, 401);
     expect(response.body.error.message).toBe('Incorrect email or password');
 
     response = await request(app)
@@ -60,7 +60,6 @@ describe('Users', () => {
 
     ({ data } = response.body);
 
-    expect(response.status, 200);
     expect(!!data.user.password).toBe(false);
     const { token } = data;
 
@@ -70,7 +69,6 @@ describe('Users', () => {
 
     ({ data } = response.body);
 
-    expect(response.status, 200);
     expect(data.name).toBe(signupParams.name);
     expect(!!data.password).toBe(false);
   });
