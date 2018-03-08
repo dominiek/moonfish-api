@@ -11,7 +11,6 @@ config.setTestConfig({
 });
 
 const app = require('../../../src/app');
-const router = require('../applicants');
 const Applicant = require('../../models/applicant');
 const { initialize: initializeEmails } = require('../../lib/emails');
 

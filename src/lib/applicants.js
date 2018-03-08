@@ -5,7 +5,6 @@ const Mnemonic = require('bitcore-mnemonic');
 const config = require('../config');
 const Applicant = require('../models/applicant');
 const { sendWelcome } = require('./emails');
-const { ValidateError } = require('../lib/errors');
 
 const JWT_EXPIRY = '2h';
 const MAGIC_TOKEN_EXPIRY_SECONDS = 3600;
@@ -56,6 +55,7 @@ exports.exportSafeApplicant = (applicant) => {
     ethAmount,
     ethAddress,
   } = object;
+
   return {
     email,
     firstName,

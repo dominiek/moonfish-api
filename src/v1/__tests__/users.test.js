@@ -1,6 +1,5 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
 
-const router = require('../users');
 const User = require('../../models/user');
 
 const app = require('../../../src/app');

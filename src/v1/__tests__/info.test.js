@@ -1,5 +1,4 @@
 const app = require('../../../src/app');
-const router = require('../info');
 const config = require('../../config');
 
 const {

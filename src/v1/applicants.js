@@ -2,7 +2,6 @@ const Router = require('koa-router');
 
 const { calculateStatus } = require('../lib/sale-status');
 const { fetchSession } = require('../middlewares/applicants');
-const { createError } = require('../lib/utils');
 
 const {
   apply,
