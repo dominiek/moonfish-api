@@ -11,13 +11,9 @@ const MAGIC_TOKEN_EXPIRY_SECONDS = 3600;
 
 const jwtSecret = config.get('jwt.secret');
 
-exports.apply = async (tokensaleStatus, {
+exports.apply = async ({
   email,
 }) => {
-  if (!tokensaleStatus.acceptApplicants) {
-    throw new Error('Token sale is not accepting applicants currently');
-  }
-
   if (!email || !email.length) {
     throw new Error('Need a valid email address');
   }
@@ -97,10 +93,6 @@ exports.register = async (tokensaleStatus, magicToken, {
   lastName,
   ethAmount,
 }) => {
-  if (!tokensaleStatus.acceptApplicants) {
-    throw new Error('Token sale is not accepting applicants currently');
-  }
-
   if (!magicToken || !magicToken.length) {
     throw new Error('Need a valid magic token');
   }

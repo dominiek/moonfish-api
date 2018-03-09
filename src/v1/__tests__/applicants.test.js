@@ -44,18 +44,19 @@ describe('Applicants', () => {
     let data;
     let error;
 
-    const params = {
+    const body = {
       email: 'john@galt.com',
     };
 
     response = await request(app)
       .post('/1/applicants/apply')
-      .send(params);
+      .send(body);
 
     ({ data, error } = response.body);
 
-    expect(error).toBe(undefined);
-    expect(data.email).toBe(params.email);
+    console.log(response.body);
+    expect(response.status).toBe(200);
+    expect(data.email).toBe(body.email);
     expect(!!data.magicToken).toBe(false);
     expect(!!data.mnemonicPhrase).toBe(true);
 
@@ -87,7 +88,7 @@ describe('Applicants', () => {
     ({ data, error } = response.body);
 
     expect(error).toBe(undefined);
-    expect(data.email).toBe(params.email);
+    expect(data.email).toBe(body.email);
     expect(!!data.magicToken).toBe(false);
   });
 
@@ -97,7 +98,7 @@ describe('Applicants', () => {
     let error;
 
     const email = 'john@galt.com';
-    const applicant = await apply({ acceptApplicants: true }, { email });
+    const applicant = await apply({ email });
 
     response = await request(app)
       .post('/1/applicants/sessions')
@@ -130,6 +131,7 @@ describe('Applicants', () => {
       })
       .set(...generateSessionHeader(token));
     ({ data, error } = response.body);
+
     expect(error).toBe(undefined);
     expect(data.email).toBe(email);
     expect(data.completedRegistration).toBe(true);
@@ -145,7 +147,7 @@ describe('Applicants', () => {
     let error;
 
     const email = 'john@galt.com';
-    const applicant = await apply({ acceptApplicants: true }, { email });
+    const applicant = await apply({ email });
 
     await register({ acceptApplicants: true }, applicant.magicToken, {
       email,

@@ -25,23 +25,9 @@ beforeEach(async () => {
 afterAll(teardownDatabase);
 
 describe('Applicants', () => {
-  test('It should be able to apply and get a magic token (failures)', async () => {
-    expect.assertions(3);
-
-    await apply({ acceptApplicants: false }, {}).catch((e) => {
-      expect(e.message).toMatch('not accepting applicants');
-    });
-    await apply({ acceptApplicants: true }, {}).catch((e) => {
-      expect(e.message).toMatch('valid email address');
-    });
-    await apply({ acceptApplicants: true }, { email: '' }).catch((e) => {
-      expect(e.message).toMatch('valid email address');
-    });
-  });
-
   test('It should be able to apply and get a magic token (success)', async () => {
     const email = 'info@dominiek.com';
-    const applicant = await apply({ acceptApplicants: true }, { email });
+    const applicant = await apply({ email });
     expect(applicant.magicToken.length).toBe(128);
     expect(applicant.email).toBe(email);
     expect(!!applicant.magicTokenGeneratedAt).toBe(true);
@@ -72,30 +58,30 @@ describe('Applicants', () => {
     await register({ acceptApplicants: false }, null, {}).catch((e) => {
       expect(e.message).toMatch('not accepting applicants');
     });
-    await register({ acceptApplicants: true }, null, {}).catch((e) => {
+    await register(null, {}).catch((e) => {
       expect(e.message).toMatch('valid magic token');
     });
-    await register({ acceptApplicants: true }, 'bla', {}).catch((e) => {
+    await register('bla', {}).catch((e) => {
       expect(e.message).toMatch('No applicant found');
     });
     const email = 'info@dominiek.com';
-    const applicant = await apply({ acceptApplicants: true }, { email });
+    const applicant = await apply({ email });
     applicant.completedRegistration = true;
     await applicant.save();
-    await register({ acceptApplicants: true }, applicant.magicToken, {}).catch((e) => {
+    await register(applicant.magicToken, {}).catch((e) => {
       expect(e.message).toMatch('completed registration');
     });
     applicant.completedRegistration = false;
     await applicant.save();
-    await register({ acceptApplicants: true }, applicant.magicToken, {}).catch((e) => {
+    await register(applicant.magicToken, {}).catch((e) => {
       expect(e.message).toMatch('valid firstName');
     });
   });
 
   test('It should be able to register (success)', async () => {
     const email = 'info@dominiek.com';
-    const applicant = await apply({ acceptApplicants: true }, { email });
-    const registeredApplicant = await register({ acceptApplicants: true }, applicant.magicToken, {
+    const applicant = await apply({ email });
+    const registeredApplicant = await register(applicant.magicToken, {
       firstName: 'John',
       lastName: 'Galt',
       ethAmount: 1.0,
@@ -119,7 +105,7 @@ describe('Applicants', () => {
       expect(e.message).toMatch('No applicant found');
     });
     const email = 'info@dominiek.com';
-    const applicant = await apply({ acceptApplicants: true }, { email });
+    const applicant = await apply({ email });
     await participate({ acceptParticipation: true }, applicant.magicToken, {}).catch((e) => {
       expect(e.message).toMatch('not completed');
     });
@@ -134,7 +120,7 @@ describe('Applicants', () => {
     expect.assertions(1);
 
     const email = 'info@dominiek.com';
-    const applicant = await apply({ acceptApplicants: true }, { email });
+    const applicant = await apply({ email });
     applicant.completedRegistration = true;
     applicant.magicTokenGeneratedAt = Date.now() - (2 * 3600 * 1000);
     await applicant.save();
@@ -145,8 +131,8 @@ describe('Applicants', () => {
 
   test('It should be able to participate (success)', async () => {
     const email = 'info@dominiek.com';
-    const applicant = await apply({ acceptApplicants: true }, { email });
-    await register({ acceptApplicants: true }, applicant.magicToken, {
+    const applicant = await apply({ email });
+    await register(applicant.magicToken, {
       firstName: 'John',
       lastName: 'Galt',
       ethAmount: 1.0,
@@ -166,7 +152,7 @@ describe('Applicants', () => {
   });
 
   test('It should convert a user to a safe application object without magicToken', async () => {
-    const user = await apply({ acceptApplicants: true }, {
+    const user = await apply({
       email: 'info@dominiek.com',
     });
     expect(!!exportSafeApplicant(user).email).toBe(true);
