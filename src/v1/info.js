@@ -1,7 +1,5 @@
-
-
 const Router = require('koa-router');
-const config = require('../config');
+const config = require('../lib/config');
 const { calculateStatus } = require('../lib/sale-status');
 
 const router = new Router();

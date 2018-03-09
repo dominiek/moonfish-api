@@ -1,14 +1,4 @@
-const config = require('../../config');
-
-config.setTestConfig({
-  tokenSale: {
-    maxWhitelistedApplicants: 20,
-    startTime: (new Date(Date.now() - (24 * 3600 * 1000))).toUTCString(),
-    endTime: (new Date(Date.now() + (24 * 3600 * 1000))).toUTCString(),
-    allowOversubscribedApplications: true,
-    maxCumulativeEthAmount: false,
-  }
-});
+const config = require('../../lib/config');
 
 const app = require('../../../src/app');
 const Applicant = require('../../models/applicant');
@@ -30,6 +20,10 @@ beforeAll(async () => {
   await initializeEmails();
   await setupDatabase();
   await Applicant.remove();
+  config.__set('tokenSale', {
+    startTime: (new Date(Date.now() - (24 * 3600 * 1000))).toUTCString(),
+    endTime: (new Date(Date.now() + (24 * 3600 * 1000))).toUTCString(),
+  }, true);
 });
 
 beforeEach(async () => {
@@ -38,7 +32,7 @@ beforeEach(async () => {
 
 afterAll(teardownDatabase);
 
-describe('Applicants', () => {
+describe('/1/applicants', () => {
   test('It should allow us to apply to token sale', async () => {
     let response;
     let data;

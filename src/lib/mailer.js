@@ -1,5 +1,5 @@
 const postmark = require('postmark');
-const config = require('../config');
+const config = require('../lib/config');
 
 const apiKey = config.get('postmark.apikey');
 const from = config.get('postmark.from');
