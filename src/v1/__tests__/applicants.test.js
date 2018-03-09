@@ -54,7 +54,6 @@ describe('Applicants', () => {
 
     ({ data, error } = response.body);
 
-    console.log(response.body);
     expect(response.status).toBe(200);
     expect(data.email).toBe(body.email);
     expect(!!data.magicToken).toBe(false);

@@ -88,7 +88,7 @@ exports.decodeSession = (token) => {
   return payload.magicToken;
 };
 
-exports.register = async (tokensaleStatus, magicToken, {
+exports.register = async (magicToken, {
   firstName,
   lastName,
   ethAmount,
@@ -134,12 +134,9 @@ exports.register = async (tokensaleStatus, magicToken, {
   return applicant;
 };
 
-exports.participate = async (tokensaleStatus, magicToken, {
+exports.participate = async (magicToken, {
   ethAddress,
 }) => {
-  if (!tokensaleStatus.acceptParticipation) {
-    throw new Error('Token sale is currently closed');
-  }
   if (!magicToken || !magicToken.length) {
     throw new Error('Need a valid magic token');
   }
