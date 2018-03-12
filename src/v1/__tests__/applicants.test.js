@@ -87,7 +87,6 @@ describe('/1/applicants', () => {
 
     expect(error).toBe(undefined);
     expect(data.email).toBe(params.email);
-    expect(!!data.magicToken).toBe(false);
   });
 
   test('It should allow us to finalize registration', async () => {
@@ -186,7 +185,6 @@ describe('/1/applicants', () => {
     response = await request(app)
       .post('/1/applicants/participate')
       .send({
-        magicToken: applicant.magicToken,
         ethAddress: '0x00',
       })
       .set(...generateSessionHeader(token));

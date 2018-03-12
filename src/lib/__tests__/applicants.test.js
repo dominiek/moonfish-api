@@ -46,24 +46,6 @@ describe('Applicants', () => {
     expect(applicant.mnemonicPhrase.split(' ').length).toBe(2);
   });
 
-  /*
-  test('It should be able to encode and decode a session', () => {
-    const magicToken = 'mahou da yo';
-    const badToken = 'bla';
-    const goodToken = encodeSession(magicToken);
-    expect(goodToken.length).toBe(164);
-    expect(decodeSession(goodToken)).toBe(magicToken);
-    expect(() => decodeSession(badToken)).toThrow('jwt malformed');
-  });
-
-  test('It should be able to have a an expiration on the session', async () => {
-    const magicToken = 'mahou da yo';
-    const token = encodeSession(magicToken, '1s');
-    await new Promise(accept => setTimeout(() => accept(), 3000));
-    expect(() => decodeSession(token)).toThrow('jwt expired');
-  });
-  */
-
   test('It should be able to register (failures)', async () => {
     expect.assertions(3);
 
