@@ -18,7 +18,10 @@
   },
   "jwt": {
     "secret": "[change me]",
-    "adminSecret": "[change me]"
+    "expiresIn": {
+      "temporary": "1h",
+      "regular": "2h"
+    }
   },
   "tokenSale": {
     "maxWhitelistedApplicants": 20,
