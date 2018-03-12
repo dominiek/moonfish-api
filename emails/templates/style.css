@@ -8,11 +8,11 @@ img {
 }
 
 body {
-  background-color: #f6f6f6;
+  background-color: #000005;
   font-family: sans-serif;
   -webkit-font-smoothing: antialiased;
-  font-size: 14px;
-  line-height: 1.4;
+  font-size: 16px;
+  line-height: 1.5;
   margin: 0;
   padding: 0;
   -ms-text-size-adjust: 100%;
@@ -36,7 +36,7 @@ table td {
       ------------------------------------- */
 
 .body {
-  background-color: #f6f6f6;
+  background-color: #000005;
   width: 100%;
 }
 
@@ -62,8 +62,13 @@ table td {
 /* -------------------------------------
           HEADER, FOOTER, MAIN
       ------------------------------------- */
+.logo {
+  display: block;
+  margin: 0 auto 10px auto;
+}
+
 .main {
-  background: #ffffff;
+  background: #f2f6fc;
   border-radius: 3px;
   width: 100%;
 }
@@ -76,6 +81,14 @@ table td {
 .content-block {
   padding-bottom: 10px;
   padding-top: 10px;
+}
+
+.phrase {
+  padding-left: 12px;
+  padding-right: 12px;
+  background-color: #ffffff;
+  border: 1px solid #fbce0e;
+  margin-bottom: 20px;
 }
 
 .footer {
@@ -102,10 +115,10 @@ h3,
 h4 {
   color: #000000;
   font-family: sans-serif;
-  font-weight: 400;
+  font-weight: bold;
   line-height: 1.4;
   margin: 0;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 h1 {
@@ -155,28 +168,28 @@ a {
   text-align: center;
 }
 .btn a {
-  background-color: #ffffff;
-  border: solid 1px #3498db;
-  border-radius: 5px;
+  background-color: #050520;
+  border: solid 1px #050520;
+  border-radius: 3px;
   box-sizing: border-box;
-  color: #3498db;
+  color: #fff;
   cursor: pointer;
   display: inline-block;
   font-size: 14px;
   font-weight: bold;
   margin: 0;
-  padding: 12px 25px;
+  padding: 12px 40px;
   text-decoration: none;
   text-transform: capitalize;
 }
 
 .btn-primary table td {
-  background-color: #3498db;
+  background-color: #050520;
 }
 
 .btn-primary a {
-  background-color: #3498db;
-  border-color: #3498db;
+  background-color: #050520;
+  border-color: #050520;
   color: #ffffff;
 }
 
