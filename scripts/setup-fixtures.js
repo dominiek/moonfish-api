@@ -1,6 +1,6 @@
 const { signup } = require('../src/lib/users');
 const User = require('../src/models/user');
-const config = require('../src/config');
+const config = require('../src/lib/config');
 
 const admin = config.get('admin');
 const adminPassword = config.get('admin.password');

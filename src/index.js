@@ -2,7 +2,7 @@ const database = require('./database');
 const setupFixtures = require('../scripts/setup-fixtures');
 const { initialize: initializeEmails } = require('./lib/emails');
 const app = require('./app');
-const config = require('./config');
+const config = require('./lib/config');
 
 const PORT = config.get('bind.port');
 const HOST = config.get('bind.host');

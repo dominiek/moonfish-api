@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { sendMail } = require('./mailer');
-const config = require('../config');
+const config = require('../lib/config');
 const { template: templateFn } = require('./utils');
 const { promisify } = require('util');
 

@@ -4,7 +4,7 @@ const cors = require('@koa/cors');
 const logger = require('koa-logger');
 const bodyParser = require('koa-bodyparser');
 const errorHandler = require('./middlewares/error-handler');
-const config = require('./config');
+const config = require('./lib/config');
 const { version } = require('../package.json');
 const v1 = require('./v1');
 

@@ -1,8 +1,8 @@
 
 const { setupDatabase, teardownDatabase } = require('../../lib/test-utils');
 const { initialize: initializeEmails } = require('../../lib/emails');
-
 const Applicant = require('../../models/applicant');
+const config = require('../../lib/config');
 
 const {
   apply,
@@ -16,6 +16,7 @@ const {
 beforeAll(async () => {
   await setupDatabase();
   await initializeEmails();
+  config.__restore();
 });
 
 beforeEach(async () => {
@@ -104,6 +105,18 @@ describe('Applicants', () => {
     expect(registeredApplicant.firstName).toBe('John');
     expect(registeredApplicant.lastName).toBe('Galt');
     expect(registeredApplicant.ethAmount).toBe(1);
+  });
+
+  test('It should be fail to register too much eth', async () => {
+    config.__set('tokenSale.maxApplicantEthAmount', 1.3);
+    const email = 'info@dominiek.com';
+    const applicant = await apply({ acceptApplicants: true }, { email });
+    const registeredApplicant = register({ acceptApplicants: true }, applicant.magicToken, {
+      firstName: 'John',
+      lastName: 'Galt',
+      ethAmount: 2.0,
+    });
+    await expect(registeredApplicant).rejects.toHaveProperty('message', 'EthAmount is too high, max amount 1.3');
   });
 
   test('It should be able to participate (failures)', async () => {

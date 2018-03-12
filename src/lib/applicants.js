@@ -2,7 +2,7 @@ const { randomBytes, createHash } = require('crypto');
 const jwt = require('jsonwebtoken');
 const Mnemonic = require('bitcore-mnemonic');
 
-const config = require('../config');
+const config = require('../lib/config');
 const Applicant = require('../models/applicant');
 const { sendWelcome } = require('./emails');
 
@@ -114,6 +114,11 @@ exports.register = async (tokensaleStatus, magicToken, {
   }
   if (applicant.completedRegistration) {
     throw new Error('Applicant already completed registration');
+  }
+
+  const maxApplicantEthAmount = config.get('tokenSale.maxApplicantEthAmount');
+  if (maxApplicantEthAmount && ethAmount > maxApplicantEthAmount) {
+    throw new Error(`EthAmount is too high, max amount ${maxApplicantEthAmount}`);
   }
 
   if (!firstName || !firstName.length) {

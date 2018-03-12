@@ -1,5 +1,4 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
-
 const User = require('../../models/user');
 
 const app = require('../../../src/app');
@@ -27,7 +26,7 @@ describe('Users', () => {
     let response;
     let data;
 
-    const signupParams = {
+    const body = {
       username: 'john',
       email: 'john@galt.com',
       password: 'hello',
@@ -37,25 +36,25 @@ describe('Users', () => {
 
     response = await request(app)
       .post('/1/users')
-      .send(signupParams);
+      .send(body);
 
     ({ data } = response.body);
 
     expect(response.status).toBe(200);
-    expect(data.name).toBe(signupParams.name);
+    expect(data.name).toBe(body.name);
     expect(!!data.password).toBe(false);
     expect(!!await User.findOne({ username: 'john' })).toBe(true);
 
     response = await request(app)
       .post('/1/users/sessions')
-      .send({ email: signupParams.email, password: 'wrong' });
+      .send({ email: body.email, password: 'wrong' });
 
     // expect(response.status, 401);
     expect(response.body.error.message).toBe('Incorrect email or password');
 
     response = await request(app)
       .post('/1/users/sessions')
-      .send(signupParams);
+      .send(body);
 
     ({ data } = response.body);
 
@@ -68,7 +67,7 @@ describe('Users', () => {
 
     ({ data } = response.body);
 
-    expect(data.name).toBe(signupParams.name);
+    expect(data.name).toBe(body.name);
     expect(!!data.password).toBe(false);
   });
 
