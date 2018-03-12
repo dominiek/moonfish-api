@@ -6,7 +6,7 @@ const config = require('../lib/config');
 
 const BCRYPT_SALT_ROUNDS = 10;
 
-const jwtSecret = config.get('jwt.secret');
+const jwtSecret = config.get('jwt.adminSecret');
 
 exports.signup = async ({
   username,
