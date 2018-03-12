@@ -2,7 +2,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const config = require('../config');
+const config = require('../lib/config');
 
 const BCRYPT_SALT_ROUNDS = 10;
 

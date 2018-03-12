@@ -1,14 +1,18 @@
 
-const config = require('../config');
+const config = require('../lib/config');
 const Applicant = require('../models/applicant');
 
-exports.calculateStatus = async (nowTs = Date.now(), {
-  startTime = config.get('tokenSale.startTime'),
-  endTime = config.get('tokenSale.endTime'),
-  maxWhitelistedApplicants = config.get('tokenSale.maxWhitelistedApplicants'),
-  maxCumulativeEthAmount = config.get('tokenSale.maxCumulativeEthAmount'),
-  allowOversubscribedApplications = config.get('tokenSale.allowOversubscribedApplications')
-} = {}) => {
+exports.calculateStatus = async (nowTs = Date.now(), options = {}) => {
+  const {
+    startTime,
+    endTime,
+    maxWhitelistedApplicants,
+    maxCumulativeEthAmount,
+    allowOversubscribedApplications
+  } = {
+    ...config.get('tokenSale'),
+    ...options,
+  };
   // Determine if token sale is active
   const isActive = (nowTs > Date.parse(startTime)) && (nowTs < Date.parse((endTime)));
 
