@@ -31,11 +31,11 @@ function template(templateName, map) {
   return templateFn(templateStr, map);
 }
 
-exports.sendWelcome = (email, { magicToken, mnemonicPhrase }) => {
+exports.sendWelcome = (email, { token, mnemonicPhrase }) => {
   const options = {
     ...defaultOptions,
-    magicToken,
-    mnemonicPhrase,
+    token,
+    mnemonicPhrase
   };
 
   sendMail({

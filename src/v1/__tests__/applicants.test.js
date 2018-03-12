@@ -16,6 +16,10 @@ const {
   register,
 } = require('../../lib/applicants');
 
+const {
+  createApplicantTemporaryToken,
+} = require('../../lib/tokens');
+
 beforeAll(async () => {
   await initializeEmails();
   await setupDatabase();
@@ -48,9 +52,8 @@ describe('/1/applicants', () => {
 
     ({ data, error } = response.body);
 
-    expect(response.status).toBe(200);
+    expect(error).toBe(undefined);
     expect(data.email).toBe(body.email);
-    expect(!!data.magicToken).toBe(false);
     expect(!!data.mnemonicPhrase).toBe(true);
 
     const applicant = await Applicant.findOne({ email: 'john@galt.com' });
@@ -58,15 +61,17 @@ describe('/1/applicants', () => {
 
     response = await request(app)
       .post('/1/applicants/sessions')
-      .send({ magicToken: 'wrong' });
+      .send({ token: 'wrong' });
 
     ({ data, error } = response.body);
 
-    expect(error.message).toBe('Invalid magic token');
+    expect(error.message).toBe('jwt malformed');
+
+    const goodToken = createApplicantTemporaryToken(applicant);
 
     response = await request(app)
       .post('/1/applicants/sessions')
-      .send({ magicToken: applicant.magicToken });
+      .send({ token: goodToken });
 
     ({ data, error } = response.body);
 
@@ -82,7 +87,6 @@ describe('/1/applicants', () => {
 
     expect(error).toBe(undefined);
     expect(data.email).toBe(body.email);
-    expect(!!data.magicToken).toBe(false);
   });
 
   test('It should allow us to finalize registration', async () => {
@@ -93,9 +97,11 @@ describe('/1/applicants', () => {
     const email = 'john@galt.com';
     const applicant = await apply({ email });
 
+    const goodToken = createApplicantTemporaryToken(applicant);
+
     response = await request(app)
       .post('/1/applicants/sessions')
-      .send({ magicToken: applicant.magicToken });
+      .send({ token: goodToken });
 
     ({ data, error } = response.body);
     expect(error).toBe(undefined);
@@ -142,16 +148,18 @@ describe('/1/applicants', () => {
     const email = 'john@galt.com';
     const applicant = await apply({ email });
 
-    await register({ acceptApplicants: true }, applicant.magicToken, {
+    await register({ acceptApplicants: true }, applicant, {
       email,
       firstName: 'John',
       lastName: 'Galt',
       ethAmount: 3.0,
     });
 
+    const goodToken = createApplicantTemporaryToken(applicant);
+
     response = await request(app)
       .post('/1/applicants/sessions')
-      .send({ magicToken: applicant.magicToken });
+      .send({ token: goodToken });
 
     ({ data, error } = response.body);
 
@@ -165,11 +173,12 @@ describe('/1/applicants', () => {
 
     ({ data, error } = response.body);
 
-    expect(error.message).toBe('Authentication required');
+    expect(error.message).toBe('No jwt token found');
 
     response = await request(app)
       .post('/1/applicants/participate')
       .set(...generateSessionHeader(token));
+
     ({ data, error } = response.body);
 
     expect(error.message).toBe('Need a valid ethAddress');
@@ -177,7 +186,6 @@ describe('/1/applicants', () => {
     response = await request(app)
       .post('/1/applicants/participate')
       .send({
-        magicToken: applicant.magicToken,
         ethAddress: '0x00',
       })
       .set(...generateSessionHeader(token));

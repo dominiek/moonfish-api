@@ -1,60 +1,74 @@
 const Router = require('koa-router');
 
 const { calculateStatus } = require('../lib/sale-status');
-const { requireApplicant } = require('../middlewares/applicants');
-const validate = require('../middlewares/validate');
+const authenticate = require('../middlewares/authenticate');
+const Applicant = require('../models/applicant');
+const { createApplicantToken } = require('../lib/tokens');
 const Joi = require('joi');
+const validate = require('../middlewares/validate');
 
 const {
   apply,
   register,
   participate,
   exportSafeApplicant,
-  isValidMagicToken,
-  encodeSession,
-  getApplicantByMagicToken,
 } = require('../lib/applicants');
+
+const fetchApplicant = async (ctx, next) => {
+  ctx.state.applicant = await Applicant.findById(ctx.state.jwt.applicant);
+  if (!ctx.state.applicant) ctx.throw(500, 'user associsated to token could not not be found');
+  await next();
+};
 
 const router = new Router();
 router
-  .post('/apply', validate({ body: { email: Joi.string().email().required() } }), async (ctx) => { // Apply to become a participant
-    const status = await calculateStatus();
-    if (!status.acceptApplicants) {
-      ctx.throw('Token sale is not accepting applicants currently', 409);
+  .post(
+    '/apply',
+    validate({ body: { token: Joi.string().required() } }),
+    async (ctx) => { // Apply to become a participant
+      const tokenSaleStatus = await calculateStatus();
+      const applicant = await apply(tokenSaleStatus, ctx.request.body);
+      ctx.body = {
+        data: {
+          ...exportSafeApplicant(applicant),
+          mnemonicPhrase: applicant.mnemonicPhrase,
+        }
+      };
     }
-    const rawApplicant = await apply(ctx.request.body);
-    const { mnemonicPhrase } = rawApplicant;
-    const applicant = exportSafeApplicant(rawApplicant);
-    applicant.mnemonicPhrase = mnemonicPhrase;
-    ctx.body = { data: applicant };
-  })
-  .post('/sessions', validate({ body: { magicToken: Joi.string().required() } }), async (ctx) => { // Create session with magic token
-    const { magicToken } = ctx.request.body;
-    const validMagicToken = await isValidMagicToken(magicToken);
-    if (!validMagicToken) ctx.throw('Invalid magic token', 401);
-    const rawApplicant = await getApplicantByMagicToken(magicToken);
-    const token = encodeSession(magicToken);
-    const applicant = exportSafeApplicant(rawApplicant);
-    ctx.body = { data: { token, applicant } };
-  })
-  .use(requireApplicant)
+  );
+
+router
+  .post(
+    '/sessions',
+    validate({ body: { token: Joi.string().required() } }),
+    authenticate({ type: 'applicant:temporary' }, { getToken: (ctx) => ctx.request.body.token }),
+    fetchApplicant,
+    async (ctx) => {
+      ctx.body = {
+        data: {
+          token: createApplicantToken(ctx.state.applicant),
+          applicant: exportSafeApplicant(ctx.state.applicant),
+        }
+      };
+    }
+  );
+
+router
+  .use(authenticate({ type: 'applicant' }))
+  .use(fetchApplicant)
   .get('/sessions', (ctx) => { // Get session
     ctx.body = { data: exportSafeApplicant(ctx.state.applicant) };
   })
-  .post('/register', validate({ body: { magicToken: Joi.string().required() } }), async (ctx) => { // Finalize registration for applicant
+  .post('/register', async (ctx) => { // Finalize registration for applicant
+    const { applicant } = ctx.state;
     const tokensaleStatus = await calculateStatus();
-    if (!tokensaleStatus.acceptApplicants) {
-      ctx.throw('Token sale is not accepting applicants currently', 409);
-    }
-    const rawApplicant = await register(ctx.state.applicant.magicToken, ctx.request.body);
+    const rawApplicant = await register(tokensaleStatus, applicant, ctx.request.body);
     ctx.body = { data: exportSafeApplicant(rawApplicant) };
   })
   .post('/participate', async (ctx) => { // Participate in token sale
+    const { applicant } = ctx.state;
     const tokensaleStatus = await calculateStatus();
-    if (!tokensaleStatus.acceptParticipation) {
-      ctx.throw('Token sale is currently closed', 409);
-    }
-    const rawApplicant = await participate(ctx.state.applicant.magicToken, ctx.request.body);
+    const rawApplicant = await participate(tokensaleStatus, applicant, ctx.request.body);
     ctx.body = { data: exportSafeApplicant(rawApplicant) };
   });
 
