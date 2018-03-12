@@ -17,6 +17,7 @@
     "password": "[change me]"
   },
   "jwt": {
+    "adminSecret": "[change me]",
     "secret": "[change me]",
     "expiresIn": {
       "temporary": "1h",
