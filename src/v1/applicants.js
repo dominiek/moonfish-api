@@ -1,54 +1,67 @@
 const Router = require('koa-router');
 
 const { calculateStatus } = require('../lib/sale-status');
-const { fetchSession } = require('../middlewares/applicants');
+const authenticate = require('../middlewares/authenticate');
+const Applicant = require('../models/applicant');
+const { createApplicantToken } = require('../lib/tokens');
 
 const {
   apply,
   register,
   participate,
   exportSafeApplicant,
-  isValidMagicToken,
-  encodeSession,
-  getApplicantByMagicToken,
 } = require('../lib/applicants');
+
+const fetchApplicant = async (ctx, next) => {
+  ctx.state.applicant = await Applicant.findById(ctx.state.jwt.applicant);
+  if (!ctx.state.applicant) ctx.throw(500, 'user associsated to token could not not be found');
+  await next();
+};
 
 const router = new Router();
 router
-  .use(fetchSession)
   .post('/apply', async (ctx) => { // Apply to become a participant
     const tokenSaleStatus = await calculateStatus();
-    const rawApplicant = await apply(tokenSaleStatus, ctx.request.body);
-    const { mnemonicPhrase } = rawApplicant;
-    const applicant = exportSafeApplicant(rawApplicant);
-    applicant.mnemonicPhrase = mnemonicPhrase;
-    ctx.body = { data: applicant };
-  })
-  .post('/sessions', async (ctx) => { // Create session with magic token
-    const { magicToken } = ctx.request.body;
-    const validMagicToken = await isValidMagicToken(magicToken);
-    if (!validMagicToken) ctx.throw('Invalid magic token', 401);
-    const rawApplicant = await getApplicantByMagicToken(magicToken);
-    const token = encodeSession(magicToken);
-    const applicant = exportSafeApplicant(rawApplicant);
-    ctx.body = { data: { token, applicant } };
-  })
+    const applicant = await apply(tokenSaleStatus, ctx.request.body);
+    ctx.body = {
+      data: {
+        ...exportSafeApplicant(applicant),
+        mnemonicPhrase: applicant.mnemonicPhrase,
+      }
+    };
+  });
+
+router
+  .post(
+    '/sessions',
+    authenticate({ type: 'applicant:temporary' }, { getToken: (ctx) => ctx.request.body.token }),
+    fetchApplicant,
+    async (ctx) => {
+      ctx.body = {
+        data: {
+          token: createApplicantToken(ctx.state.applicant),
+          applicant: exportSafeApplicant(ctx.state.applicant),
+        }
+      };
+    }
+  );
+
+router
+  .use(authenticate({ type: 'applicant' }))
+  .use(fetchApplicant)
   .get('/sessions', (ctx) => { // Get session
-    if (!ctx.state.applicant) ctx.throw('Authentication required', 401);
     ctx.body = { data: exportSafeApplicant(ctx.state.applicant) };
   })
   .post('/register', async (ctx) => { // Finalize registration for applicant
     const { applicant } = ctx.state;
-    if (!applicant) ctx.throw('Authentication required', 401);
     const tokensaleStatus = await calculateStatus();
-    const rawApplicant = await register(tokensaleStatus, applicant.magicToken, ctx.request.body);
+    const rawApplicant = await register(tokensaleStatus, applicant, ctx.request.body);
     ctx.body = { data: exportSafeApplicant(rawApplicant) };
   })
   .post('/participate', async (ctx) => { // Participate in token sale
     const { applicant } = ctx.state;
-    if (!applicant) ctx.throw('Authentication required', 401);
     const tokensaleStatus = await calculateStatus();
-    const rawApplicant = await participate(tokensaleStatus, applicant.magicToken, ctx.request.body);
+    const rawApplicant = await participate(tokensaleStatus, applicant, ctx.request.body);
     ctx.body = { data: exportSafeApplicant(rawApplicant) };
   });
 

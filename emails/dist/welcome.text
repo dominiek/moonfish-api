@@ -1,5 +1,5 @@
 Your unique key phrase is: ${mnemonicPhrase}
 To proceed with your registration, use the following link:
-https://${domain}/register?magicToken=${magicToken}
+https://${domain}/register?token=${token}
 Best,
 The ${appName} Team`,
