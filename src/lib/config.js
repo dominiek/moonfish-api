@@ -9,7 +9,7 @@ const ensureNoDefaults = (config) => {
     }
     Object.keys(config[key]).forEach((subKey) => {
       if (config[key][subKey] === '[change me]') {
-        throw new Error(`Refusing to run with configuration default: ${key} = ${config[key][subKey]}`);
+        throw new Error(`Refusing to run with configuration default: ${key}[${subKey}] = ${config[key][subKey]}`);
       }
     });
   });
@@ -17,7 +17,7 @@ const ensureNoDefaults = (config) => {
 
 const defaultConfig = nodeEnvConfiguration({
   defaults: configDefaults,
-  prefix: 'api',
+  prefix: 'moonfish',
 });
 
 if (process.env.NODE_ENV !== 'dev' && process.env.NODE_ENV !== 'test') {

@@ -94,19 +94,19 @@ yarn dev
 
 ## Configuration
 
-All values in `config/defaults.json` can be overwritten using environment variables. For example `bind.host` becomes can be overwritten using the `API_BIND_HOST` environment variable.
+All values in `config/defaults.json` can be overwritten using environment variables. For example `bind.host` becomes can be overwritten using the `MOONFISH_BIND_HOST` environment variable.
 
-- `API_BIND_HOST` - Host to bind to, defaults to `"0.0.0.0"`
-- `API_BIND_PORT` - Port to bind to, defaults to `3005`
-- `API_MONGO_URI` - MongoDB URI to connect to, defaults to `mongodb://localhost/skeleton_dev`
-- `API_ADMIN_EMAIL` - Default root admin user `admin@moonfish.one`
-- `API_ADMIN_PASSWORD` - Default root admin password `[change me]`
-- `API_JWT_SECRET` - Secret key for generating JWT tokens `[change me]`
-- `API_JWT_ADMINSECRET` - Secret key for generating admin JWT tokens `[change me]`
-- `API_APP_NAME` - Application name `Moonfish`
-- `API_APP_DOMAIN` - Domain of token sale web interface `localhost`
-- `API_POSTMARK_APIKEY` - Postmark API key - used for email communication
-- `API_POSTMARK_FROM` - From address used for mail communication
+- `MOONFISH_BIND_HOST` - Host to bind to, defaults to `"0.0.0.0"`
+- `MOONFISH_BIND_PORT` - Port to bind to, defaults to `3005`
+- `MOONFISH_MONGO_URI` - MongoDB URI to connect to, defaults to `mongodb://localhost/skeleton_dev`
+- `MOONFISH_ADMIN_EMAIL` - Default root admin user `admin@moonfish.one`
+- `MOONFISH_ADMIN_PASSWORD` - Default root admin password `[change me]`
+- `MOONFISH_JWT_SECRET` - Secret key for generating JWT tokens `[change me]`
+- `MOONFISH_JWT_ADMINSECRET` - Secret key for generating admin JWT tokens `[change me]`
+- `MOONFISH_APP_NAME` - Application name `Moonfish`
+- `MOONFISH_APP_DOMAIN` - Domain of token sale web interface `localhost`
+- `MOONFISH_POSTMARK_APIKEY` - Postmark API key - used for email communication
+- `MOONFISH_POSTMARK_FROM` - From address used for mail communication
 
 ## Building the Container
 
@@ -136,6 +136,7 @@ docker build -t ico-template-auction-api .
 - [x] Setup CI
 - [x] Add unique communication keyphrase for each user
 - [x] HTML email templates
+- [ ] Make sure registered accounts don't get overwritten when new apply is called
 - [ ] Setup coveralls code coverage reporting
 - [ ] Improve documentation
 - [ ] Add license information
