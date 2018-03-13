@@ -37,7 +37,7 @@
     "domain": "localhost"
   },
   "postmark": {
-    "from": "no-reply@localhost",
+    "from": "no-reply@moonfish.one",
     "apikey": "[change me]"
   }
 }

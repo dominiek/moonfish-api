@@ -30,6 +30,7 @@ exports.apply = async (tokensaleStatus, {
     token: createApplicantTemporaryToken(applicant),
     mnemonicPhrase: applicant.mnemonicPhrase
   });
+
   return applicant;
 };
 

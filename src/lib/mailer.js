@@ -23,6 +23,9 @@ exports.sendMail = ({
         Subject: subject,
         TextBody: text,
         HtmlBody: html
+      }).catch((error) => {
+        console.error(`Error happened while sending email to ${to} (${error.message})`);
+        console.error(error);
       });
     }
   }
