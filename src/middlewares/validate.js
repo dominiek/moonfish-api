@@ -2,7 +2,7 @@ const Joi = require('joi');
 
 module.exports = function validate(schemas, options) {
   const defaultOptions = {
-    allowUnknown: true,
+    allowUnknown: false,
     abortEarly: false
   };
 

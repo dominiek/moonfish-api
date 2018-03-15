@@ -14,6 +14,7 @@
     "dev": "nodemon -w src --exec \"MOCK_EMAIL=true NODE_ENV=dev node src/index.js\"",
     "start": "NODE_ENV=prod node src/index",
     "lint": "eslint src",
+    "jest": "jest",
     "test": "jest -i src",
     "test:watch": "jest --watch -i src",
     "build:emails": "node emails/build"

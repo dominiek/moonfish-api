@@ -18,7 +18,10 @@ app.use(errorHandler)
   .use(bodyParser());
 
 app.on('error', (err) => {
-  console.error(err.stack);
+  // dont output stacktraces of errors that is throw with status as they are known
+  if (!err.status || err.status === 500) {
+    console.error(err.stack);
+  }
 });
 
 const router = new Router();

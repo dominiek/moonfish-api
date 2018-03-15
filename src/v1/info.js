@@ -4,19 +4,14 @@ const { calculateStatus } = require('../lib/sale-status');
 
 const router = new Router();
 
-const tokenSale = config.get('tokenSale');
-
 router.get('/', async (ctx) => {
+  const tokenSale = config.get('tokenSale');
   ctx.body = {
     data: {
-      details: {
-        startTime: tokenSale.startTime,
-        startTimeTs: Date.parse(tokenSale.startTime),
-        endTime: tokenSale.endTime,
-        endTimeTs: Date.parse(tokenSale.endTime),
-        maxWhitelistedApplicants: tokenSale.maxWhitelistedApplicants,
-      },
-      status: await calculateStatus()
+      ...tokenSale,
+      startTS: Date.parse(tokenSale.startTime),
+      endTS: Date.parse(tokenSale.endTime),
+      ...(await calculateStatus())
     }
   };
 });

@@ -21,20 +21,22 @@
     "secret": "[change me]",
     "expiresIn": {
       "temporary": "1h",
-      "regular": "2h"
+      "regular": "2h",
+      "invite": "1d"
     }
   },
   "tokenSale": {
     "maxWhitelistedApplicants": 20,
-    "startTime": "Tue, 22 Mar 2018 00:00:00 GMT",
-    "endTime": "Tue, 22 Apr 2018 00:00:00 GMT",
+    "startTime": "2018-03-22T00:00:00.000Z",
+    "endTime": "2018-04-22T00:00:00.000Z",
     "allowOversubscribedApplications": true,
-    "maxApplicantEthAmount": false,
+    "maxApplicantEthAmount": 4,
     "maxCumulativeEthAmount": false
   },
-  "app": {
-    "name": "Moonfish",
-    "domain": "localhost"
+  "website": {
+    "appName": "Moonfish",
+    "url": "http://localhost:1305",
+    "adminUrl": "http://localhost:1306"
   },
   "postmark": {
     "from": "no-reply@localhost",

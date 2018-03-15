@@ -63,7 +63,7 @@ describe('validate', () => {
   });
 
 
-  it('should drop keys that were not defined in the Joi scheme', async () => {
+  it('should not allow attributes that are not defined', async () => {
     const middleware = validate({
       query: { somethingExisting: Joi.string() }
     });
@@ -74,9 +74,7 @@ describe('validate', () => {
       shouldBeRemoved: 'should be been removed from request'
     };
 
-    await middleware(ctx, () => {
-      expect(ctx.request.query.somethingExisting).toBe('yes');
-      expect(ctx.request.query.shouldBeRemoved).toBe(undefined);
-    });
+    await expect(middleware(ctx)).rejects.toHaveProperty('status', 400);
+    await expect(middleware(ctx)).rejects.toHaveProperty('message', '"shouldBeRemoved" is not allowed');
   });
 });

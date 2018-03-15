@@ -29,3 +29,7 @@ exports.template = (template, map) => {
     return templateGet(p, map);
   });
 };
+
+exports.sleep = (ms) => {
+  return new Promise(r => setTimeout(r, ms));
+};

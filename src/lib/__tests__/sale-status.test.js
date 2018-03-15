@@ -1,5 +1,5 @@
 
-const { setupDatabase, teardownDatabase } = require('../../lib/test-utils');
+const { setupDatabase, teardownDatabase } = require('../../test-helpers');
 const Applicant = require('../../models/applicant');
 
 const {
@@ -16,7 +16,7 @@ beforeEach(async () => {
 
 afterAll(teardownDatabase);
 
-describe('Status', () => {
+describe('Sale Status', () => {
   test('Not active, accepting whitelist applicants', async () => {
     const status = await calculateStatus(new Date(2018, 2, 21), {
       startTime: 'Tue, 22 Mar 2018 00:00:00 GMT',
@@ -47,14 +47,12 @@ describe('Status', () => {
 
   test('Not active, oversubscribed', async () => {
     await Applicant.create({
-      magicToken: '1',
       email: 'test1@test.com',
       completedRegistration: true,
       ethAmount: 10,
     });
 
     await Applicant.create({
-      magicToken: '2',
       email: 'test2@test.com',
       completedRegistration: true,
       ethAmount: 30,
@@ -76,14 +74,12 @@ describe('Status', () => {
 
   test('Not active, oversubscribed, allow oversubscribed applicants', async () => {
     await Applicant.create({
-      magicToken: '1',
       email: 'test1@test.com',
       completedRegistration: true,
       ethAmount: 10,
     });
 
     await Applicant.create({
-      magicToken: '2',
       email: 'test2@test.com',
       completedRegistration: true,
       ethAmount: 30,
@@ -120,14 +116,12 @@ describe('Status', () => {
 
   test('Not active, oversubscribed by eth', async () => {
     await Applicant.create({
-      magicToken: '1',
       email: 'test1@test.com',
       completedRegistration: true,
       ethAmount: 10,
     });
 
     await Applicant.create({
-      magicToken: '2',
       email: 'test2@test.com',
       completedRegistration: true,
       ethAmount: 30,
@@ -144,7 +138,6 @@ describe('Status', () => {
     expect(status.isOverSubscribedByNumPeople).toBe(false);
     expect(status.isOverSubscribedByEthAmount).toBe(true);
     expect(status.isOverSubscribed).toBe(true);
-
     expect(status.isActive).toBe(false);
     expect(status.acceptApplicants).toBe(false);
     expect(status.acceptParticipation).toBe(false);

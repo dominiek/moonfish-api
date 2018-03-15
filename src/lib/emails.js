@@ -8,10 +8,7 @@ const { promisify } = require('util');
 const templatesDist = path.join(__dirname, '../../emails/dist');
 const templates = {};
 
-const defaultOptions = {
-  appName: config.get('app.name'),
-  domain: config.get('app.domain')
-};
+const defaultOptions = config.get('website');
 
 const readdir = promisify(fs.readdir);
 const readFile = promisify(fs.readFile);
@@ -40,8 +37,22 @@ exports.sendWelcome = (email, { token, mnemonicPhrase }) => {
 
   sendMail({
     to: email,
-    subject: `Welcome to ${defaultOptions.appName} Registration`,
+    subject: `Welcome to ${defaultOptions.name} Registration`,
     html: template('welcome.html', options),
     text: template('welcome.text', options)
+  });
+};
+
+exports.sendAdminInvite = (email, { token }) => {
+  const options = {
+    ...defaultOptions,
+    token
+  };
+
+  sendMail({
+    to: email,
+    subject: `Admin Invitation for ${defaultOptions.name}`,
+    html: template('admin-invite.html', options),
+    text: template('admin-invite.text', options)
   });
 };
