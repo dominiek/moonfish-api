@@ -13,6 +13,7 @@
   },
   "admin": {
     "username": "admin",
+    "name": "admin",
     "email": "admin@moonfish.one",
     "password": "[change me]"
   },

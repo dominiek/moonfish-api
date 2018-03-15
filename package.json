@@ -47,7 +47,7 @@
   },
   "jest": {
     "setupFiles": [
-      "<rootDir>/scripts/setup-tests.js"
+      "<rootDir>/src/test-helpers/setup-tests.js"
     ]
   }
 }

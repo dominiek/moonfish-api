@@ -36,10 +36,10 @@ schema
   });
 
 schema.pre('save', async function preSave(next) {
-  if (this._password !== undefined) {
+  if (this._password) {
     const salt = await bcrypt.genSalt(12);
     this.hashedPassword = await bcrypt.hash(this._password, salt);
-    this._password = null;
+    delete this._password;
   }
   return next();
 });
