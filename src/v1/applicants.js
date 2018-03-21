@@ -28,21 +28,16 @@ router
       }
 
       let applicant = await Applicant.findOne({ email });
-      if (applicant) {
-        ctx.throw(409, 'An applicant with that email already exists');
+      if (!applicant) {
+        applicant = await Applicant.create({ email });
       }
 
-      applicant = await Applicant.create({ email });
       await sendWelcome(email, {
         token: createApplicantTemporaryToken(applicant),
         mnemonicPhrase: applicant.mnemonicPhrase
       });
 
-      ctx.body = {
-        data: {
-          mnemonicPhrase: applicant.mnemonicPhrase
-        }
-      };
+      ctx.status = 204;
     }
   );
 

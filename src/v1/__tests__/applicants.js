@@ -39,19 +39,16 @@ describe('/1/applicants', () => {
     test('should create applicant', async () => {
       const email = 'john@galt.com';
       const response = await request('POST', '/1/applicants/apply', { email });
-      const { data } = response.body;
       const applicate = await Applicant.findOne({ email });
-      expect(response.status).toBe(200);
-      expect(data.mnemonicPhrase).toBe(applicate.mnemonicPhrase);
+      expect(response.status).toBe(204);
+      expect(applicate.email).toBe(email);
     });
 
     test('should allow a user to signup multiple times', async () => {
       const email = 'stew@food.com';
       await Applicant.create({ email });
       const response = await request('POST', '/1/applicants/apply', { email });
-      const { error } = response.body;
-      expect(response.status).toBe(409);
-      expect(error.message).toBe('An applicant with that email already exists');
+      expect(response.status).toBe(204);
     });
   });
 

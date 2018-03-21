@@ -34,8 +34,11 @@ module.exports = ({ type } = {}, options = {}) => {
     }
 
     // confirming signature
-    jwt.verify(token, secrets[keyId]); // verify will throw
-
+    try {
+      jwt.verify(token, secrets[keyId]); // verify will throw
+    } catch (e) {
+      ctx.throw(401, e);
+    }
     ctx.state.jwt = payload;
     return next();
   };
