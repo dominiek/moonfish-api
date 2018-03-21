@@ -37,7 +37,7 @@ exports.sendWelcome = (email, { token, mnemonicPhrase }) => {
 
   sendMail({
     to: email,
-    subject: `Welcome to ${defaultOptions.name} Registration`,
+    subject: `Welcome to ${options.name} Registration`,
     html: template('welcome.html', options),
     text: template('welcome.text', options)
   });
@@ -51,7 +51,7 @@ exports.sendAdminInvite = (email, { token }) => {
 
   sendMail({
     to: email,
-    subject: `Admin Invitation for ${defaultOptions.name}`,
+    subject: `Admin Invitation for ${options.name}`,
     html: template('admin-invite.html', options),
     text: template('admin-invite.text', options)
   });

@@ -3,7 +3,7 @@ const config = require('../lib/config');
 
 const secrets = {
   applicant: config.get('jwt.secret'),
-  admin: config.get('jwt.adminSecret')
+  admin: config.get('jwt.adminsecret')
 };
 
 function getToken(ctx) {

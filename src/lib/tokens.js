@@ -4,7 +4,7 @@ const config = require('../lib/config');
 const expiresIn = config.get('jwt.expiresIn');
 const secrets = {
   applicant: config.get('jwt.secret'),
-  admin: config.get('jwt.adminSecret')
+  admin: config.get('jwt.adminsecret')
 };
 
 exports.createApplicantTemporaryToken = (applicant) => {

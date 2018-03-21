@@ -1,6 +1,6 @@
 {
   "name": "moonfish-api",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Open Software for Token Distribution",
   "main": "dist",
   "license": "MIT",

@@ -18,7 +18,7 @@
     "password": "[change me]"
   },
   "jwt": {
-    "adminSecret": "[change me]",
+    "adminsecret": "[change me]",
     "secret": "[change me]",
     "expiresIn": {
       "temporary": "1h",
@@ -40,7 +40,7 @@
     "adminUrl": "http://localhost:1306"
   },
   "postmark": {
-    "from": "no-reply@localhost",
+    "from": "no-reply@moonfish.one",
     "apikey": "[change me]"
   }
 }
