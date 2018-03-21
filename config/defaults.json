@@ -27,7 +27,7 @@
     }
   },
   "tokenSale": {
-    "maxWhitelistedApplicants": 20,
+    "maxWhitelistedApplicants": 100,
     "startTime": "2018-03-22T00:00:00.000Z",
     "endTime": "2018-04-22T00:00:00.000Z",
     "allowOversubscribedApplications": true,
