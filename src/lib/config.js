@@ -47,7 +47,7 @@ module.exports = {
   get: (path, doThrow = true) => {
     const result = get(refs.config, path);
     if (doThrow && typeof result === 'undefined') {
-      throw Error(`config.get(${path}) is not set in the configuration`);
+      throw Error(`config.get('${path}') is not set in the configuration`);
     }
     return result;
   }

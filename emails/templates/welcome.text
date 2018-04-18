@@ -3,7 +3,7 @@ Welcome to ${appName} Registration
 Your unique key phrase is: ${mnemonicPhrase}
 
 To proceed with your registration, use the following link:
-https://${domain}/register?token=${token}
+${url}/register?token=${token}
 ---
 Best,
 The ${appName} Team

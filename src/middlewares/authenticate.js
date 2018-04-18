@@ -1,4 +1,10 @@
-const { decodeToken } = require('../lib/tokens');
+const jwt = require('jsonwebtoken');
+const config = require('../lib/config');
+
+const secrets = {
+  applicant: config.get('jwt.secret'),
+  admin: config.get('jwt.adminsecret')
+};
 
 function getToken(ctx) {
   let token;
@@ -10,16 +16,30 @@ function getToken(ctx) {
   return token;
 }
 
-module.exports = ({ type }, options = {}) => {
+module.exports = ({ type } = {}, options = {}) => {
   return async (ctx, next) => {
     const token = options.getToken ? options.getToken(ctx) : getToken(ctx);
-    if (!token) ctx.throw(400, 'No jwt token found');
-    const jwt = decodeToken(token);
-    if (!jwt) ctx.throw(500, 'Failed to decode jwt token');
-    if (type && jwt.type !== type) {
-      ctx.throw(400, `Wrong type of jwt token, expected "${type}"'`);
+    if (!token) ctx.throw(400, 'no jwt token found');
+
+    // ignoring signature for the moment
+    const decoded = jwt.decode(token, { complete: true });
+    if (decoded === null) return ctx.throw(400, 'bad jwt token');
+    const { payload } = decoded;
+    const keyId = payload.kid;
+    if (!['applicant', 'admin'].includes(keyId)) {
+      ctx.throw(401, 'jwt token does not match supported kid');
     }
-    ctx.state.jwt = jwt;
+    if (type && payload.type !== type) {
+      ctx.throw(401, `endpoint requires jwt token payload match type "${type}"`);
+    }
+
+    // confirming signature
+    try {
+      jwt.verify(token, secrets[keyId]); // verify will throw
+    } catch (e) {
+      ctx.throw(401, e);
+    }
+    ctx.state.jwt = payload;
     return next();
   };
 };

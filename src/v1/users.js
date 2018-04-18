@@ -1,76 +1,102 @@
 const Router = require('koa-router');
-
-const {
-  fetchSession,
-  requireUser,
-} = require('../middlewares/users');
-
-const {
-  signup,
-  authenticate,
-  encodeSession,
-  exportSafeUser,
-} = require('../lib/users');
-
+const Joi = require('joi');
+const { omit } = require('lodash');
+const validate = require('../middlewares/validate');
+const authenticate = require('../middlewares/authenticate');
+const tokens = require('../lib/tokens');
+const { sendAdminInvite } = require('../lib/emails');
 const User = require('../models/user');
 
 const router = new Router();
 
-router.use(fetchSession)
-  .post('/', async (ctx) => {
-    const rawUser = await signup(ctx.request.body);
-    ctx.body = { data: exportSafeUser(rawUser) };
-  })
-  .post('/sessions', async (ctx) => {
-    const { email, password } = ctx.request.body;
-    const rawUser = await authenticate(email, password);
-    const token = encodeSession(rawUser._id); //eslint-disable-line
-    const user = exportSafeUser(rawUser);
-    ctx.body = { data: { user, token } };
-  });
+const fetchUser = async (ctx, next) => {
+  ctx.state.user = await User.findById(ctx.state.jwt.userId);
+  if (!ctx.state.user) ctx.throw(500, 'user associsated to token could not not be found');
+  await next();
+};
 
 router
-  .use(requireUser())
-  .get('/self', (ctx) => { // Get self (user info)
-    const user = exportSafeUser(ctx.state.user);
-    ctx.body = { data: user };
-  })
-  .post('/self', async (ctx) => { // Update self (user profile)
-    const { body } = ctx.request;
-    ['name'].forEach((validField) => {
-      if (body[validField]) {
-        ctx.state.user.set('name', body[validField]);
+  .post(
+    '/register',
+    validate({
+      body: {
+        token: Joi.string().required(),
+        name: Joi.string().required(),
+        username: Joi.string().regex(/^[a-zA-Z0-9_]+$/).min(3).required(),
+        password: Joi.string().required()
       }
-    });
-    await ctx.state.user.save();
-    ctx.body = { data: exportSafeUser(ctx.state.user) };
-  })
-  .delete('/self', async (ctx) => {
-    const { user } = ctx.state;
-    await user.remove();
-    ctx.body = { data: { success: true } };
-  });
+    }),
+    authenticate({ type: 'admin:temporary' }, { getToken: (ctx) => ctx.request.body.token }),
+    async (ctx) => {
+      const { jwt } = ctx.state;
+      if (!jwt || !jwt.email) {
+        ctx.throw(500, 'jwt token doesnt contain email');
+      }
+      const user = await User.create({
+        email: jwt.email,
+        ...omit(ctx.request.body, ['token'])
+      });
+      ctx.body = { data: { token: tokens.createAdminToken(user) } };
+    }
+  )
+  .post(
+    '/authenticate',
+    validate({
+      body: {
+        email: Joi.string().email().required(),
+        password: Joi.string().required()
+      }
+    }),
+    async (ctx) => {
+      const { email, password } = ctx.request.body;
+      const user = await User.findOne({ email });
+      if (!user) {
+        ctx.throw(401, 'email password combination does not match');
+      }
+      const isSame = await user.verifyPassword(password);
+      if (!isSame) {
+        ctx.throw(401, 'email password combination does not match');
+      }
+      ctx.body = { data: { token: tokens.createAdminToken(user) } };
+    }
+  );
 
 router
-  .use(requireUser('admin'))
-  .get('/:id', async (ctx) => {
-    const rawUser = await User.findById(ctx.params.id);
-    const user = exportSafeUser(rawUser);
-    ctx.body = { data: user };
+  .use(authenticate({ type: 'admin' }))
+  .use(fetchUser)
+  .get('/me', (ctx) => {
+    ctx.body = { data: ctx.state.user.toResource() };
   })
-  .delete('/:id', async (ctx) => {
-    const user = await User.findById(ctx.params.id);
-    if (!user) throw new Error('No such user');
-    await user.remove();
-    ctx.body = { data: { success: true } };
-  })
-  .post('/:id', async (ctx) => {
-    const rawUser = await User.findById(ctx.params.id);
-    if (!rawUser) throw new Error('No such user');
-    rawUser.set(ctx.request.body);
-    await rawUser.save();
-    const user = exportSafeUser(rawUser);
-    ctx.body = { data: user };
-  });
+  .patch(
+    '/me',
+    validate({
+      body: {
+        name: Joi.string().required(),
+      }
+    }),
+    async (ctx) => {
+      const { user } = ctx.state;
+      Object.assign(user, ctx.request.body);
+      await user.save();
+      ctx.body = { data: user.toResource() };
+    }
+  )
+  .post(
+    '/invite',
+    validate({
+      body: {
+        emails: Joi.array().items(Joi.string()).required()
+      }
+    }),
+    async (ctx) => {
+      const { emails } = ctx.request.body;
+      await Promise.all(emails.map(async email => {
+        const count = await User.count({ email });
+        if (count) return;
+        await sendAdminInvite(email, { token: tokens.createAdminTemporaryToken(email) });
+      }));
+      ctx.status = 201;
+    }
+  );
 
 module.exports = router;

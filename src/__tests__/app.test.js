@@ -1,12 +1,10 @@
 const {
   request
-} = require('../lib/test-utils');
+} = require('../test-helpers');
 
-const app = require('../app');
-
-describe.only('Test App Index', () => {
+describe('Test App Index', () => {
   test('It should have a valid index response', async () => {
-    const response = await request(app).get('/');
+    const response = await request('GET', '/');
     expect(response.statusCode).toBe(200);
     expect(typeof response.body.version).toBe('string');
   });

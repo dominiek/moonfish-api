@@ -13,6 +13,7 @@
   },
   "admin": {
     "username": "admin",
+    "name": "admin",
     "email": "admin@moonfish.one",
     "password": "[change me]"
   },
@@ -21,20 +22,22 @@
     "secret": "[change me]",
     "expiresIn": {
       "temporary": "1h",
-      "regular": "2h"
+      "regular": "2h",
+      "invite": "1d"
     }
   },
   "tokenSale": {
     "maxWhitelistedApplicants": 100,
-    "startTime": "Tue, 16 Apr 2018 17:00:00 GMT",
-    "endTime": "Tue, 16 May 2018 17:00:00 GMT",
+    "startTime": "2018-03-22T00:00:00.000Z",
+    "endTime": "2018-04-22T00:00:00.000Z",
     "allowOversubscribedApplications": true,
-    "maxApplicantEthAmount": false,
+    "maxApplicantEthAmount": 4,
     "maxCumulativeEthAmount": false
   },
-  "app": {
-    "name": "Moonfish",
-    "domain": "localhost"
+  "website": {
+    "appName": "Moonfish",
+    "url": "http://localhost:1305",
+    "adminUrl": "http://localhost:1306"
   },
   "postmark": {
     "from": "no-reply@moonfish.one",
