@@ -1,4 +1,6 @@
 
+_This has evolved to: https://github.com/bedrockio/bedrock-core_
+
 [![Build Status](https://img.shields.io/travis/rekallai/moonfish-api.svg?branch=master&style=flat-square)](https://travis-ci.org/rekallai/moonfish-api)
 [![Dependencies Status](https://david-dm.org/rekallai/moonfish-api/status.svg)](https://david-dm.org/rekallai/moonfish-api)
 
