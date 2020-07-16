@@ -29,7 +29,7 @@
     "koa-bodyparser": "^4.2.0",
     "koa-logger": "^3.1.0",
     "koa-router": "^7.4.0",
-    "lodash": "^4.17.5",
+    "lodash": "^4.17.19",
     "mongoose": "^5.0.7",
     "node-env-configuration": "^1.0.3",
     "postmark": "^1.5.0"
